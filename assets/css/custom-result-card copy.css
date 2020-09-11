@@ -1,0 +1,26 @@
+
+
+@page {
+  size: A4;
+   margin: 10mm;
+}
+@media print {
+  #footer-table { page-break-after: always; }
+}
+.hidden_row { border:0; }
+.result_card_container { height:30cm; width:20.5cm; padding:25px; font-family: Poppins,sans-serif; page-break-after: always; } 
+#profile-img { width: 100px; max-width:100px; }
+#school-logo { width: 100px; max-width:100px; }
+#school-name { font-family: Poppins,sans-serif; font-weight: 300; line-height: 26px; font-size: 25px; }
+#exam-name { margin-top: -10px; font-family: Poppins,sans-serif; font-weight: 300; font-size: 18px; }
+#session-name { margin-top: -20px; font-family: Poppins,sans-serif; font-weight: 300; font-size: 14px; }
+#std-info-table { border-collapse: collapse; border-spacing: 0; margin-bottom:0px; }
+#result-marks-table{ border-collapse: collapse; }
+#result-marks-table>td>th { border: 1px solid; }
+#other-info-table{ border-collapse: collapse; margin-bottom:15px; }
+#other-info-table>td>th { border: 1px solid; }
+#grading-table{ border-collapse: collapse; text-align: center;}
+#teacher-remark-place { padding:0px; text-align:left; vertical-align:top; } 
+#footer-table{ margin-top:50px; }
+#footer-table tr:nth-child(1) td{ text-align:center; }
+

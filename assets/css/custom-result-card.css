@@ -1,0 +1,56 @@
+.result_card_container { 
+	margin:0;
+	padding: 0; 
+	width: 100%; 
+	font-size: 12px;
+	height:40cm; 
+	width:27.6cm;
+	border: 3px solid black;
+	page-break-after: always; 
+}
+
+table.complete_result_card_details_table, table.result_analysis_table {
+	border-collapse: collapse;
+}
+table.complete_result_card_details_table td, table.result_analysis_table td {
+	border: 1px solid black;
+	text-align: center;
+}
+
+table.result_analysis_table tr:nth-child(1) td:nth-child(1) {
+	background-color: red;
+	text-align: center;
+}
+
+table.result_analysis_table tr td:nth-child(1) {
+	padding-left: 5px;
+	text-align: left;
+}
+
+#teacher_and_administrator_remarks_table {
+	border-collapse: collapse;
+}
+
+#teacher_and_administrator_remarks_table td {
+	border: 1px solid black;
+	text-align: left;
+}
+
+
+#std_skill_and_evaluations_table {
+	border-collapse: collapse;
+}
+
+#std_skill_and_evaluations_table td {
+	border: 1px solid black;
+	text-align: center;
+}
+
+#std_skill_and_evaluations_table tr td:nth-child(1) {
+	padding-left: 5px;
+	text-align: left;
+}
+
+#std_skill_and_evaluations_table tr:nth-child(1) td:nth-child(1) {
+	text-align: center;
+}

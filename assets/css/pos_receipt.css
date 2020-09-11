@@ -1,0 +1,7 @@
+#mytable{
+	font-family: monospace;
+}
+#mytable th, td {
+    border: dashed #000 !important;
+    border-width: 0 0 1px 0 !important;
+}

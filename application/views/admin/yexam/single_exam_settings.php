@@ -1,0 +1,307 @@
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper" ng-controller="examSettingsController" ng-init="initFinalResultCardGroups()">
+    <section class="content-header">
+        <h1><i class="fa fa-mortar-board"></i> <?php echo $this->lang->line('academics'); ?></h1>
+    </section>
+    <!-- Main content -->
+    <section class="content">
+        <!--.row-->
+        <div class="row">
+            <div class="col-md-12"> 
+                <div class="nav-tabs-custom">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="<?php if ($selected_tab == 'tab_subject_groups') { echo "active"; } else if($selected_tab == NULL || $selected_tab == "") { echo "active"; }?>">
+                            <a href="#subject_groups" class="nav-link"
+                            aria-controls="profile" role="tab"
+                            data-toggle="tab"
+                            aria-expanded="true"><span
+                            class="visible-xs"><i class="fa fa-calculator"></i></span><span
+                            class="hidden-xs"><?php echo $this->lang->line('subject_group'); ?></span></a>
+                        </li>
+                        <li role="presentation" class="<?php if ($selected_tab == 'exams') { echo "active"; } ?>">
+                            <a href="#exams" class="nav-link"
+                            aria-controls="profile" role="tab"
+                            data-toggle="tab"
+                            aria-expanded="true"><span
+                            class="visible-xs"><i class="fa fa-calculator"></i></span><span
+                            class="hidden-xs"><?php echo $this->lang->line('assessments'); ?></span></a>
+                        </li>
+                        <li role="presentation" class="<?php if ($selected_tab == 'tab_result_card_groups') { echo "active"; } ?>">
+                            <a href="#result_card_groups" class="nav-link"
+                            aria-controls="profile" role="tab"
+                            data-toggle="tab"
+                            aria-expanded="true"><span
+                            class="visible-xs"><i class="fa fa-indent"></i></span><span
+                            class="hidden-xs"><?php echo $this->lang->line('terms');?></span></a>
+                        </li>
+                        <li role="presentation" class="<?php if ($selected_tab == 'exam_details') { echo "active"; } ?>">
+                            <a href="#exam_details" class="nav-link"
+                            aria-controls="profile" role="tab"
+                            data-toggle="tab"
+                            aria-expanded="true"><span
+                            class="visible-xs"><i class="fa fa-indent"></i></span><span
+                            class="hidden-xs"><?php echo $this->lang->line('lbl_exam_details'); ?></span></a>
+                        </li>
+                        <li role="presentation" class="<?php if ($selected_tab == 'passing_rules') { echo "active"; } ?>">
+                            <a href="#passing_rules" class="nav-link"
+                            aria-controls="profile" role="tab"
+                            data-toggle="tab"
+                            aria-expanded="true"><span
+                            class="visible-xs"><i class="fa fa-indent"></i></span><span
+                            class="hidden-xs"><?php echo $this->lang->line('assessment_passing_rules');?></span></a>
+                        </li>
+                        <!--<li role="presentation" class="<?php if ($selected_tab == 'cumulative_passing_rules') { echo "active"; } ?>">
+                            <a href="#cumulative_passing_rules" class="nav-link"
+                            aria-controls="profile" role="tab"
+                            data-toggle="tab"
+                            aria-expanded="true"><span
+                            class="visible-xs"><i class="fa fa-indent"></i></span><span
+                            class="hidden-xs"><?php echo $this->lang->line('cumulative_passing_rules');?></span></a>
+                        </li>-->
+                        <li role="presentation" class="<?php if ($selected_tab == 'grading') { echo "active"; } ?>">
+                            <a href="#grading" class="nav-link"
+                            aria-controls="profile" role="tab"
+                            data-toggle="tab"
+                            aria-expanded="true"><span
+                            class="visible-xs"><i class="fa fa-indent"></i></span><span
+                            class="hidden-xs"><?php echo $this->lang->line('grade');?></span></a>
+                        </li>
+                    </ul>
+                    
+                    <div class="tab-content" style="padding-top: 15px;">
+                        <div class="tab-pane <?php if ($selected_tab === 'tab_subject_groups') { echo 'active'; }else if($selected_tab == NULL || $selected_tab == '') { echo 'active'; } ?>" id="subject_groups">
+                            <!--<div class="well" style="background:#e4e7ea;" ng-controller="subjectController">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label"><?php //echo $this->lang->line('class'); ?></label>
+                                            <select class="form-control" id="classes" ng-model="selecedVal" ng-init="selecedVal='<?= $tab_subject_groups_class_id; ?>';fetchClasses(selecedVal)" ng-change="loadClassBatches(selecedVal)">
+                                                <option value="all"><?php //echo $this->lang->line('option_all'); ?></option>
+                                                <option ng-repeat="cls in classes" value="{{cls.id}}">{{cls.class}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4" id="yasir_batches">
+                                        <div class="form-group">
+                                            <label class="control-label"><?php //echo $this->lang->line('section'); ?></label>
+                                            <select class="form-control" ng-model="selecedVal2" id="batches" ng-init="selecedVal2='<?= $tab_subject_groups_batch_id; ?>'">
+                                                <option value="all"><?php //echo $this->lang->line('option_all'); ?></option>
+                                                <option ng-repeat="batch in batches" value="{{batch.section_id}}">{{batch.section}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12 text-right">
+                                        <a class="xcrud-action xcrud-button xcrud-cyan" href="<?php //echo base_url() ?>admin/Examination/single_exam_settings?tab=tab_subject_groups&class_id={{selecedVal}}&batch_id={{selecedVal2}}"><?php //echo 'search'; ?></a>
+                                    </div>
+                                </div>
+                            </div>-->
+
+                            <?php echo $subject_groups; ?>
+                        </div>
+
+                        <div class="tab-pane <?php if ($selected_tab === 'exams') { echo "active"; } ?>" id="exams">
+                            <?php echo $exams_new; ?>
+                        </div>
+
+                        <div class="tab-pane <?php if ($selected_tab === 'tab_result_card_groups') { echo "active"; } ?>" id="result_card_groups">
+                            <!--<div class="well" style="background:#e4e7ea;" ng-controller="resultCardGroupController">
+                                <div class="row">
+                                    <div class="col-md-4" id="examDetailsSessions">
+                                        <div class="form-group">
+                                            <label class="control-label"><?php //echo $this->lang->line('session'); ?></label>
+                                            <small class="req"> *</small>
+                                            <select class="form-control" id="sessions" ng-model="selecedVal1_1" ng-init="selecedVal1_1='<?= $tab_result_card_groups_selected_session_id; ?>';initSessions()">
+                                                <option value=""><?php //echo $this->lang->line('please_select_a_session'); ?></option>
+                                                <option ng-repeat="ses in sessions" value="{{ses.id}}">{{ses.session}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4" id="examDetailsClasses">
+                                        <div class="form-group">
+                                            <label class="control-label"><?php //echo $this->lang->line('class'); ?></label>
+                                            <select class="form-control" id="classes" ng-model="selecedVal" ng-init="selecedVal='<?= $tab_result_card_groups_selected_class_id; ?>';fetchClasses(selecedVal)" ng-change="loadClassBatches(selecedVal)">
+                                                <option value="all"><?php //echo $this->lang->line('option_all'); ?></option>
+                                                <option ng-repeat="cls in classes" value="{{cls.id}}">{{cls.class}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4" id="examDetailsSections">
+                                        <div class="form-group">
+                                            <label class="control-label"><?php //echo $this->lang->line('section'); ?></label>
+                                            <select class="form-control" ng-model="selecedVal2" id="batches" ng-init="selecedVal2='<?= $tab_result_card_groups_selected_batch_id; ?>'">
+                                                <option value="all"><?php //echo $this->lang->line('option_all'); ?></option>
+                                                <option ng-repeat="batch in batches" value="{{batch.section_id}}">{{batch.section}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12 text-right">
+                                        <a class="xcrud-action xcrud-button xcrud-cyan" href="<?php //echo base_url() ?>admin/Examination/single_exam_settings?tab=tab_result_card_groups&class_id={{selecedVal}}&batch_id={{selecedVal2}}&session_id={{selecedVal1_1}}"><?php //echo 'search'; ?></a>
+                                    </div>
+                                </div>
+                            </div>-->
+
+                            <?php echo $result_card_groups; ?>
+                        </div>
+
+                        <div class="tab-pane <?php if ($selected_tab === 'exam_details') { echo "active"; } ?>" id="exam_details">
+                            <!--<div class="well" style="background:#e4e7ea;" ng-controller="subjectController">
+                                <div class="row">
+                                    <div class="col-md-4" id="examDetailsSessions">
+                                        <div class="form-group">
+                                            <label class="control-label"><?php //echo $this->lang->line('session'); ?></label>
+                                            <small class="req"> *</small>
+                                            <select class="form-control" id="sessions" ng-model="selecedVal1_1" ng-init="selecedVal1_1='<?= $tab_subjects_selected_session_id; ?>';initSessions()">
+                                                <option value=""><?php //echo $this->lang->line('please_select_a_session'); ?></option>
+                                                <option ng-repeat="ses in sessions" value="{{ses.id}}">{{ses.session}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4" id="examDetailsClasses">
+                                        <div class="form-group">
+                                            <label class="control-label"><?php //echo $this->lang->line('class'); ?></label>
+                                            <select class="form-control" id="classes" ng-model="selecedVal" ng-init="selecedVal='<?= $tab_subjects_selected_class_id; ?>';fetchClasses(selecedVal)" ng-change="loadClassBatches(selecedVal)">
+                                                <option value="all"><?php //echo $this->lang->line('option_all'); ?></option>
+                                                <option ng-repeat="cls in classes" value="{{cls.id}}">{{cls.class}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4" id="examDetailsSections">
+                                        <div class="form-group">
+                                            <label class="control-label"><?php //echo $this->lang->line('section'); ?></label>
+                                            <select class="form-control" ng-model="selecedVal2" id="batches" ng-init="selecedVal2='<?= $tab_subjects_selected_batch_id; ?>'">
+                                                <option value="all"><?php //echo $this->lang->line('option_all'); ?></option>
+                                                <option ng-repeat="batch in batches" value="{{batch.section_id}}">{{batch.section}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12 text-right">
+                                        <a class="xcrud-action xcrud-button xcrud-cyan" href="<?php //echo base_url() ?>admin/Examination/single_exam_settings?tab=exam_details&class_id={{selecedVal}}&batch_id={{selecedVal2}}&session_id={{selecedVal1_1}}"><?php //echo 'search'; ?></a>
+                                    </div>
+                                </div>
+                            </div>-->
+
+                            <?php echo $exam_details; ?>
+                        </div>
+
+
+                        <div class="tab-pane <?php if ($selected_tab === 'passing_rules') { echo "active"; } ?>" id="passing_rules">
+                            <!--<div class="well" style="background:#e4e7ea;" ng-controller="subjectController">
+                                <div class="row">
+                                    <div class="col-md-4" id="passingRulesSessions">
+                                        <div class="form-group">
+                                            <label class="control-label"><?php //echo $this->lang->line('session'); ?></label>
+                                            <small class="req"> *</small>
+                                            <select class="form-control" id="sessions" ng-model="selecedVal1_11" ng-init="selecedVal1_11='<?= $tab_rules_selected_session_id; ?>';initSessions()">
+                                                <option value=""><?php //echo $this->lang->line('please_select_a_session'); ?></option>
+                                                <option ng-repeat="ses in sessions" value="{{ses.id}}">{{ses.session}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4" id="passingRulesClasses">
+                                        <div class="form-group">
+                                            <label class="control-label"><?php //echo $this->lang->line('class'); ?></label>
+                                            <select class="form-control" id="classes" ng-model="selecedVal" ng-init="selecedVal='<?= $tab_rules_selected_class_id; ?>';fetchClasses(selecedVal)" ng-change="loadClassBatches(selecedVal)">
+                                                <option value="all"><?php //echo $this->lang->line('option_all'); ?></option>
+                                                <option ng-repeat="cls in classes" value="{{cls.id}}">{{cls.class}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4" id="passingRulesSections">
+                                        <div class="form-group">
+                                            <label class="control-label"><?php //echo $this->lang->line('section'); ?></label>
+                                            <select class="form-control" ng-model="selecedVal2" id="batches" ng-init="selecedVal2='<?= $tab_rules_selected_batch_id; ?>'">
+                                                <option value="all"><?php //echo $this->lang->line('option_all'); ?></option>
+                                                <option ng-repeat="batch in batches" value="{{batch.section_id}}">{{batch.section}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12 text-right">
+                                        <a class="xcrud-action xcrud-button xcrud-cyan" href="<?php //echo base_url() ?>admin/Examination/single_exam_settings?tab=passing_rules&class_id={{selecedVal}}&batch_id={{selecedVal2}}&session_id={{selecedVal1_11}}"><?php //echo 'search'; ?></a>
+                                    </div>
+                                </div>
+                            </div>-->
+
+                            <?php echo $passing_rules; ?>
+                        </div>
+
+                        <!--<div class="tab-pane <?php if ($selected_tab === 'cumulative_passing_rules') { echo "active"; } ?>" id="cumulative_passing_rules">
+                            <div class="well" style="background:#e4e7ea;" ng-controller="subjectController">
+                                <div class="row">
+                                    <div class="col-md-4" id="passingRulesSessions">
+                                        <div class="form-group">
+                                            <label class="control-label"><?php //echo $this->lang->line('session'); ?></label>
+                                            <small class="req"> *</small>
+                                            <select class="form-control" id="sessions" ng-model="selecedVal1_11" ng-init="selecedVal1_11='<?= $tab_rules_selected_session_id; ?>';initSessions()">
+                                                <option value=""><?php //echo $this->lang->line('please_select_a_session'); ?></option>
+                                                <option ng-repeat="ses in sessions" value="{{ses.id}}">{{ses.session}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4" id="passingRulesClasses">
+                                        <div class="form-group">
+                                            <label class="control-label"><?php //echo $this->lang->line('class'); ?></label>
+                                            <select class="form-control" id="classes" ng-model="selecedVal" ng-init="selecedVal='<?= $tab_rules_selected_class_id; ?>';fetchClasses(selecedVal)" ng-change="loadClassBatches(selecedVal)">
+                                                <option value="all"><?php //echo $this->lang->line('option_all'); ?></option>
+                                                <option ng-repeat="cls in classes" value="{{cls.id}}">{{cls.class}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4" id="passingRulesSections">
+                                        <div class="form-group">
+                                            <label class="control-label"><?php //echo $this->lang->line('section'); ?></label>
+                                            <select class="form-control" ng-model="selecedVal2" id="batches" ng-init="selecedVal2='<?= $tab_rules_selected_batch_id; ?>'">
+                                                <option value="all"><?php //echo $this->lang->line('option_all'); ?></option>
+                                                <option ng-repeat="batch in batches" value="{{batch.section_id}}">{{batch.section}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12 text-right">
+                                        <a class="xcrud-action xcrud-button xcrud-cyan" href="<?php //echo base_url() ?>admin/Examination/single_exam_settings?tab=passing_rules&class_id={{selecedVal}}&batch_id={{selecedVal2}}&session_id={{selecedVal1_11}}"><?php //echo 'search'; ?></a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <?php //echo $cum_passing_rules; ?>
+                        </div>-->
+
+                        <div class="tab-pane <?php if ($selected_tab === 'grading') { echo "active"; } ?>" id="grading">
+                            
+                            <!--<div class="well" style="background:#e4e7ea;" ng-controller="subjectController">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label"><?php //echo $this->lang->line('class'); ?></label>
+                                            <select class="form-control" id="classes" ng-model="selecedVal" ng-init="selecedVal='<?= $tab_subject_groups_class_id; ?>';fetchClasses(selecedVal)" ng-change="loadClassBatches(selecedVal)">
+                                                <option value="all"><?php //echo $this->lang->line('option_all'); ?></option>
+                                                <option ng-repeat="cls in classes" value="{{cls.id}}">{{cls.class}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12 text-right">
+                                        <a class="btn btn-sm btn-primary text-white" href="<?php //echo base_url() ?>admin/Examination/single_exam_settings?tab=tab_subject_groups&class_id={{selecedVal}}&batch_id={{selecedVal2}}&&session_id={{selecedVal1}}"><?php //echo 'search'; ?></a>
+                                    </div>
+                                </div>
+                            </div>-->
+
+                            <?php echo $grades; ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--/panel-->
+        </div>
+    </section>
+</div>
+<!-- /.content-wrapper -->
