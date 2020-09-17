@@ -191,13 +191,15 @@ class Accounts extends Admin_Controller {
         $balance = $opening_balance;
         if(count($result) > 0){
             foreach($result as $key=>$res){
-                if($res->type == "debit"){
+                $balance = $balance + $res->amount;
+                $result[$key]->balance = $balance;
+                /*if($res->type == "debit"){
                     $balance = $balance + $res->amount;
                     $result[$key]->balance = $balance;
                 } else if($res->type == "credit"){
                     $balance = $balance - $res->amount;
                     $result[$key]->balance = $balance;
-                }
+                }*/
             }
 
             $opening_balance = number_format($opening_balance, 2, '.', ',');

