@@ -85,7 +85,7 @@
                                         <td>{{s.account_title}}</td>
                                         <td>{{s.account_type}}</td>
                                         <td>
-                                            <span ng-show="s.opening_balance>0">
+                                            <span ng-show="s.opening_balance!='0'">
                                                 {{s.opening_balance}}
                                                 <span ng-show="s.opening_balance_type == 'debit'">Dr</span>
                                                 <span ng-show="s.opening_balance_type == 'credit'">Cr</span>
