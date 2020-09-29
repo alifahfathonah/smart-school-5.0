@@ -652,6 +652,13 @@ class Parents extends Parent_Controller {
     public function checkout(){
         $data["payment_settings"] = $this->common_model->dbSelect("*","payment_settings"," is_active='yes' ");
         $parent_id = $this->session->userdata("student")["id"];
+        if(count($data["payment_settings"]) > 0){
+            $data["payment_settings"][0]->api_email = "ukeredi@gmail.com";
+            $email = $this->common_model->dbSelect("guardian_email","students"," id='$parent_id' ");
+            if(Count($email) > 0){
+                $data["payment_settings"][0]->api_email = $email[0]->guardian_email;
+            }
+        }   
         $sql = "SELECT s.*, c.id as cart_id, c.quantity as quantity FROM parent_shopping_cart c INNER JOIN school_store s ON c.item_id=s.id WHERE c.parent_id='$parent_id' ";
         $items = $this->common_model->dbQuery($sql);
         $this->session->set_userdata('top_menu', 'Store');
