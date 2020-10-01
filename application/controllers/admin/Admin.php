@@ -511,6 +511,8 @@ function dashboard2() {
         $session = $this->session_model->get($session);
         $session_array = array('session_id' => $session['id'], 'session' => $session['session']);
         $this->session->set_userdata('session_array', $session_array);
+        
+        $this->common_model->update_where("sch_settings",array("id" => 1), array("session_id" => $this->input->post('popup_session')));
 
         echo json_encode(array('status' => 1, 'message' => 'Session changed successfully'));
     }

@@ -18,6 +18,8 @@ class Sessions extends Admin_Controller {
         $data['title'] = 'Session List';
         $session_result = $this->session_model->getAllSession();
         $data['sessionlist'] = $session_result;
+        //echo $this->db->last_query();
+        //echo "<pre/>"; print_r($data['sessionlist']); die();
         $this->load->view('layout/header', $data);
         $this->load->view('session/sessionList', $data);
         $this->load->view('layout/footer', $data);

@@ -8,17 +8,20 @@
         <!--.row-->
         <div class="row">
             <div class="col-md-12"> 
+                
                 <div class="nav-tabs-custom">
                     <ul class="nav nav-tabs" role="tablist">
-                        <li role="presentation" class="active">
-                            <a href="#skill_and_assessment_groups" class="nav-link"
-                            aria-controls="profile" role="tab"
-                            data-toggle="tab"
-                            aria-expanded="true"><span
-                            class="visible-xs"><i class="fa fa-indent"></i></span><span
-                            class="hidden-xs"><?php echo $this->lang->line('groups_slash_categories');?></span></a>
-                        </li>
-                        <li role="presentation" class="">
+                        <?php if($role_id == 7) { ?>
+                            <li role="presentation" class="active">
+                                <a href="#skill_and_assessment_groups" class="nav-link"
+                                aria-controls="profile" role="tab"
+                                data-toggle="tab"
+                                aria-expanded="true"><span
+                                class="visible-xs"><i class="fa fa-indent"></i></span><span
+                                class="hidden-xs"><?php echo $this->lang->line('groups_slash_categories');?></span></a>
+                            </li>
+                        <?php } ?>
+                        <li role="presentation" class="<?php if($role_id != 7) { echo 'active'; } ?>">
                             <a href="#mark_skills_and_assessments" class="nav-link"
                             aria-controls="profile" role="tab"
                             data-toggle="tab"
@@ -29,13 +32,14 @@
                     </ul>
                     
                     <div class="tab-content" style="padding-top: 15px;">
-                        <div class="tab-pane active" id="skill_and_assessment_groups">
-                            <div class="row">
-                                <?php echo $skill_and_assessment_groups; ?>
+                        <?php if($role_id == 7) { ?>
+                            <div class="tab-pane active" id="skill_and_assessment_groups">
+                                <div class="row">
+                                    <?php echo $skill_and_assessment_groups; ?>
+                                </div>
                             </div>
-                        </div>
-
-                        <div class="tab-pane" id="mark_skills_and_assessments">
+                        <?php } ?>
+                        <div class="tab-pane <?php if($role_id != 7) { echo 'active'; } ?>" id="mark_skills_and_assessments">
                             <div class="row" id="filterRow">
                                 <form name="mark_skills_and_assessments_form" ng-submit="fetchStudentsForSkills()" novalidate="">
                                     

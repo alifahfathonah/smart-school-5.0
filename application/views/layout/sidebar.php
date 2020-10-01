@@ -400,52 +400,69 @@
                     </li>
                     <?php
                 } 
-            } ?>
+            } 
 
+            if ($this->module_lib->hasActive('exams')) {
+                if ($this->rbac->hasPrivilege('y_exam_settings','can_view') ||
+                    $this->rbac->hasPrivilege('y_result_card_settings','can_view') ||
+                    $this->rbac->hasPrivilege('y_mark_exams','can_view') ||
+                    $this->rbac->hasPrivilege('y_major_sheet','can_view') ||
+                    $this->rbac->hasPrivilege('y_result_card', 'can_view') ||
+                    $this->rbac->hasPrivilege('y_skill_and_assessment', 'can_view')
+                ) { ?>
 
+                <!-- Start::Add By Mirza Muhammad Yasir -->
+                <li class="treeview <?php echo set_Topmenu('Examinations_New'); ?>">
+                    <a href="#">
+                        <i class="fa fa-map-o ftlayer"></i> <span><?php echo $this->lang->line('exams'); ?></span> <i class="fa fa-angle-left pull-right"></i>
+                    </a>
+                    <ul class="treeview-menu">
 
-            <!-- Start::Add By Mirza Muhammad Yasir -->
-            <li class="treeview <?php echo set_Topmenu('Examinations_New'); ?>">
-                <a href="#">
-                    <i class="fa fa-map-o ftlayer"></i> <span><?php echo $this->lang->line('examinations') . " New"; ?></span> <i class="fa fa-angle-left pull-right"></i>
-                </a>
-                <ul class="treeview-menu">
+                        <?php if ($this->rbac->hasPrivilege('y_exam_settings', 'can_view')) { ?>
+                            <li class="<?php echo set_Submenu('Examinations_New/single_exam_settings'); ?>"><a href="<?php echo site_url('admin/Examination/single_exam_settings'); ?>"><i class="fa fa-angle-double-right"></i> <?php echo "Exam Settings"; ?></a></li>
+                            <?php
+                        }
 
-                    <?php if ($this->rbac->hasPrivilege('exam_group', 'can_view')) { ?>
-                        <li class="<?php echo set_Submenu('Examinations_New/single_exam_settings'); ?>"><a href="<?php echo site_url('admin/Examination/single_exam_settings'); ?>"><i class="fa fa-angle-double-right"></i> <?php echo "Exam Settings"; ?></a></li>
+                        if ($this->rbac->hasPrivilege('y_result_card_settings', 'can_view')) { ?>
+                            <li class="<?php echo set_Submenu('Examinations_New/multi_exam_settings'); ?>"><a href="<?php echo site_url('admin/Examination/multi_exam_settings'); ?>"><i class="fa fa-angle-double-right"></i> <?php echo "Result Card Settings"; ?></a></li>
+                            <?php
+                        }
+
+                        if ($this->rbac->hasPrivilege('y_mark_exams', 'can_view')) {
+                            ?>
+                            <li class="<?php echo set_Submenu('Examinations_New/markexam'); ?>"><a href="<?php echo site_url('admin/Examination/markexam'); ?>"><i class="fa fa-angle-double-right"></i> <?php echo "Mark Exams"; ?></a></li>
+                            <?php
+                        } 
+                        if($this->rbac->hasPrivilege('y_major_sheet','can_view')){
+                            ?>
+                            <li class="<?php echo set_Submenu('Examinations_New/majorSheet'); ?>"><a href="<?php echo base_url(); ?>admin/Examination/majorSheet"><i class="fa fa-angle-double-right"></i> <?php echo "Major Sheet" ?></a></li>
+                            <?php
+                        }
+                        if($this->rbac->hasPrivilege('y_result_card','can_view')){
+                            ?>
+                            <li class="<?php echo set_Submenu('Examinations_New/resultcard'); ?>"><a href="<?php echo base_url(); ?>admin/Examination/resultcard"><i class="fa fa-angle-double-right"></i> <?php echo "Result Card"; ?></a></li>
+                            <?php
+                        } ?>
+                        
                         <?php
-                    }
+                        if($this->rbac->hasPrivilege('y_skill_and_assessment','can_view')){
+                            ?>
+                            <li class="<?php echo set_Submenu('Examinations_New/skill_and_assessment'); ?>"><a href="<?php echo base_url(); ?>admin/Examination/skill_and_assessment"><i class="fa fa-angle-double-right"></i> <?php echo "Skills & Assessment"; ?></a></li>
+                            <?php
+                        } ?>
+                    </ul>
+                </li>
 
-                    if ($this->rbac->hasPrivilege('exam_group', 'can_view')) { ?>
-                        <li class="<?php echo set_Submenu('Examinations_New/multi_exam_settings'); ?>"><a href="<?php echo site_url('admin/Examination/multi_exam_settings'); ?>"><i class="fa fa-angle-double-right"></i> <?php echo "Exam Settings"; ?> <small>New</small></a></li>
-                        <?php
-                    }
-
-                    if ($this->rbac->hasPrivilege('exam_result', 'can_view')) {
-                        ?>
-                        <li class="<?php echo set_Submenu('Examinations_New/markexam'); ?>"><a href="<?php echo site_url('admin/Examination/markexam'); ?>"><i class="fa fa-angle-double-right"></i> <?php echo "Mark Exams"; ?></a></li>
-                        <?php
-                    } 
-                    if($this->rbac->hasPrivilege('design_admit_card','can_view')){
-                        ?>
-                        <li class="<?php echo set_Submenu('Examinations_New/majorSheet'); ?>"><a href="<?php echo base_url(); ?>admin/Examination/majorSheet"><i class="fa fa-angle-double-right"></i> <?php echo "Major Sheet" ?></a></li>
-                        <?php
-                    }
-                    if($this->rbac->hasPrivilege('print_admit_card','can_view')){
-                        ?>
-                        <li class="<?php echo set_Submenu('Examinations_New/resultcard'); ?>"><a href="<?php echo base_url(); ?>admin/Examination/resultcard"><i class="fa fa-angle-double-right"></i> <?php echo "Result Card"; ?></a></li>
-                        <?php
-                    } ?>
-                    
-                    <?php
-                    if($this->rbac->hasPrivilege('print_admit_card','can_view')){
-                        ?>
-                        <li class="<?php echo set_Submenu('Examinations_New/skill_and_assessment'); ?>"><a href="<?php echo base_url(); ?>admin/Examination/skill_and_assessment"><i class="fa fa-angle-double-right"></i> <?php echo "Skills & Assessment"; ?></a></li>
-                        <?php
-                    } ?>
-                </ul>
-            </li>
-
+            <?php } 
+        } 
+        
+        if ($this->module_lib->hasActive('procurement')) {
+            if (
+                $this->rbac->hasPrivilege('requisition', 'can_view') || 
+                $this->rbac->hasPrivilege('pending_requests', 'can_view') || 
+                $this->rbac->hasPrivilege('history', 'can_view')
+            ) {
+        ?>
             <li class="treeview <?php echo set_Topmenu('Procurement'); ?>">
                 <a href="#">
                     <i class="fa fa-shopping-cart ftlayer"></i> <span><?php echo $this->lang->line('procurement'); ?></span> <i class="fa fa-angle-left pull-right"></i>
@@ -473,34 +490,46 @@
 
                 </ul>
             </li>
-
+                <?php } } 
+                
+                if ($this->module_lib->hasActive('accounts')) {
+                    if (
+                        $this->rbac->hasPrivilege('y_manage_account', 'can_view') ||
+                        $this->rbac->hasPrivilege('y_source_document', 'can_view') ||
+                        $this->rbac->hasPrivilege('y_accounts_ledger', 'can_view') ||
+                        $this->rbac->hasPrivilege('y_ledger_summery', 'can_view') ||
+                        $this->rbac->hasPrivilege('y_trial_balance', 'can_view') 
+                    ) {
+                
+                ?>
             <li class="treeview <?php echo set_Topmenu('Accounts'); ?>">
                 <a href="#">
                     <i class="fa fa-dollar ftlayer"></i> <span>Accounts</span> <i class="fa fa-angle-left pull-right"></i>
                 </a>
                 <ul class="treeview-menu">
-                    <?php if ($this->rbac->hasPrivilege('manage_accounts', 'can_view')) { ?>
+                    <?php if ($this->rbac->hasPrivilege('y_manage_account', 'can_view')) { ?>
                         <li class="<?php echo set_Submenu('Accounts/manage_accounts'); ?>"><a href="<?php echo site_url('admin/accounts/manage_accounts'); ?>"><i class="fa fa-angle-double-right"></i> Manage Accounts</a></li>
                     <?php } ?>
 
-                    <?php if ($this->rbac->hasPrivilege('journal_vouchers', 'can_view')) { ?>
+                    <?php if ($this->rbac->hasPrivilege('y_source_document', 'can_view')) { ?>
                         <li class="<?php echo set_Submenu('Accounts/journal_vouchers'); ?>"><a href="<?php echo site_url('admin/accounts/journal_vouchers'); ?>"><i class="fa fa-angle-double-right"></i> Source Document</a></li>
                     <?php } ?>
 
-                    <?php if ($this->rbac->hasPrivilege('accounts_ledger', 'can_view')) { ?>
+                    <?php if ($this->rbac->hasPrivilege('y_accounts_ledger', 'can_view')) { ?>
                         <li class="<?php echo set_Submenu('Accounts/accounts_ledger'); ?>"><a href="<?php echo site_url('admin/accounts/accounts_ledger'); ?>"><i class="fa fa-angle-double-right"></i>Accounts Ledger</a></li>
                     <?php } ?>
                     
-                    <?php if ($this->rbac->hasPrivilege('general_ledger_summary', 'can_view')) { ?>
+                    <?php if ($this->rbac->hasPrivilege('y_ledger_summery', 'can_view')) { ?>
                         <li class="<?php echo set_Submenu('Accounts/general_ledger_summary'); ?>"><a href="<?php echo site_url('admin/accounts/general_ledger_summary'); ?>"><i class="fa fa-angle-double-right"></i>Ledger Summary</a></li>
                     <?php } ?>
 
-                    <?php if ($this->rbac->hasPrivilege('trial_balance', 'can_view')) { ?>
+                    <?php if ($this->rbac->hasPrivilege('y_trial_balance', 'can_view')) { ?>
                         <li class="<?php echo set_Submenu('Accounts/trial_balance'); ?>"><a href="<?php echo site_url('admin/accounts/trial_balance'); ?>"><i class="fa fa-angle-double-right"></i> Trial Balance</a></li>
                     <?php } ?>
                 </ul>
 
             </li>
+                    <?php } } ?>
             <!-- End::Add By Mirza Muhammad Yasir -->
 
 

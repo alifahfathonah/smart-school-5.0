@@ -130,7 +130,7 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="exampleInputEmail1"><?php echo $this->lang->line('department'); ?></label><small class="req"> *</small>
-                                            <select class="form-control" name="department_id" ng-model="formModel.department_id" ng-value="formModel.department_id='<?php echo $this->session->userdata('admin')['department']; ?>'" required="" <?php if(!empty($this->session->userdata('admin')['department'])){ echo 'disabled'; } ?>>
+                                            <select class="form-control" name="department_id" ng-model="formModel.department_id" required="" <?php if(!empty($this->session->userdata('admin')['department'])){ echo 'disabled'; } ?>>
                                                 <option value="">Select a department</option>
                                                 <option ng-repeat="dept in departments" value="{{dept.id}}">{{dept.department_name}}</option>
                                             </select>

@@ -2122,6 +2122,10 @@ class Examination extends Admin_Controller {
         $data['title_list'] = 'Recent Batch';
         $data['examType']   = $this->exam_type;*/
 
+        foreach($this->session->userdata("admin")["roles"] as $key=>$val){
+            $data["role_id"] = $val;
+        }
+        
         $skill_and_assessment_groups = xcrud_get_instance();
         $skill_and_assessment_groups->table('sh_skill_and_assessment_groups');
         //$subject_groups->where("class_id", $params["class_id"])->where("FIND_IN_SET($batch_id,batch_id)")->where("session_id", $params["session_id"]);
