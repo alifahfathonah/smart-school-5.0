@@ -11,6 +11,7 @@ class Examination extends Admin_Controller {
     }
 
     public function multi_exam_settings(){
+        $active_session_id = count($this->common_model->dbSelect("session_id","sch_settings"," id=1 ")) > 0 ? $this->common_model->dbSelect("session_id","sch_settings"," id=1 ")[0]->session_id : null;
         if (!$this->rbac->hasPrivilege('exam_group', 'can_view')) {
             access_denied();
         }
@@ -29,62 +30,26 @@ class Examination extends Admin_Controller {
         $cumulative_settings = xcrud_get_instance();
         $cumulative_settings->table('sh_complete_result_card_settings');
         $cumulative_settings->where('deleted_at IS NULL');
+        $cumulative_settings->where('session_id',$active_session_id);
         $cumulative_settings->show_primary_ai_field(false);
         $cumulative_settings->columns('name,class_id,batch_id,exam_result_card_id,last_exam_group_id');
         $cumulative_settings->fields('name,class_id,batch_id,exam_result_card_id,last_exam_group_id');
-        //$cumulative_settings->relation('session_id', 'sessions', 'id', 'session', '', '', false, '', '', '', '');
         $cumulative_settings->relation('class_id', 'classes', 'id', 'class');
         $cumulative_settings->relation('batch_id', 'sh_batches', 'section_id', 'section','','', '', '', '', 'class_id', 'class_id');
         $cumulative_settings->relation('exam_result_card_id', 'sh_result_card_groups', 'id', 'name', '', '', true, '', '', 'class_id', 'class_id');
         $cumulative_settings->relation('last_exam_group_id', 'sh_result_card_groups', 'id', 'name','','',false,'','','class_id', 'class_id');
-        //$cumulative_settings->label('session_id', lang('session'));
         $cumulative_settings->label('class_id', lang('class'));
         $cumulative_settings->label('batch_id', lang('section'));
         $cumulative_settings->label('name', lang('name'));
         $cumulative_settings->label('exam_result_card_id', lang('result_card_groups'));
         $cumulative_settings->label('last_exam_group_id', lang('current_term'));
         $cumulative_settings->replace_remove('soft_delete');
-        //$cumulative_settings->replace_insert('insert_result_card_complete_settings');
-        //$cumulative_settings->before_update('new_subject_group_update');
         $cumulative_settings->table_name(lang("cumulative_settings"));
-        //$cumulative_settings->load_view("view", "customview.php");
         $cumulative_settings->unset_print();
         $cumulative_settings->unset_csv();
         $cumulative_settings->unset_title();
-        //$cumulative_settings->unset_search();
         $cumulative_settings->unset_limitlist();
-        
-        /*if($params != null && $params["tab"] === "tab_cumulative_settings"){
-            $data["selected_tab"] = $params["tab"];
-            $data["tab_cumulative_settings_selected_class_id"] = $params["class_id"];
-            $data["tab_cumulative_settings_selected_batch_id"] = $params["batch_id"];
-            $data["tab_cumulative_settings_selected_session_id"] = $params["session_id"];
-            if ($params["class_id"] != "all") {
-                if ($params["batch_id"] != "all") {
-                    $cumulative_settings->where('class_id', $params["class_id"]);
-                    $cumulative_settings->where('batch_id', $params["batch_id"]);
-                    $cumulative_settings->where('session_id', $params["session_id"]);
-                    $cumulative_settings->unset_add(false);
-                    $cumulative_settings->pass_default('class_id', $params["class_id"]);
-                    $cumulative_settings->pass_default('batch_id', $params["batch_id"]);
-                    $cumulative_settings->pass_default('session_id', $params["session_id"]);
-                }
-                else{
-                    $cumulative_settings->pass_default('class_id', $params["class_id"]);
-                    $cumulative_settings->where('session_id',$params["session_id"]);
-                    $data2 = $this->common_model->dbSelect("id", "sh_batches", " class_id=" . $params['class_id'] . " ");
-                    $array = array();
-                    foreach ($data2 as $value) {
-                        $array[] = $value->id;
-                    }
-                    if (count($array) > 0) {
-                        $cumulative_settings->where('batch_id', $array);
-                    } else {
-                        $cumulative_settings->where('batch_id', "0");
-                    }
-                }
-            }
-        }*/
+        $cumulative_settings->pass_var('sh_complete_result_card_settings.session_id', $active_session_id);
 
         $data["cumulative_settings"] = $cumulative_settings->render();
         $this->load->view('layout/header', $data);
@@ -93,6 +58,8 @@ class Examination extends Admin_Controller {
     }
 
     public function single_exam_settings() {
+        
+        $active_session_id = count($this->common_model->dbSelect("session_id","sch_settings"," id=1 ")) > 0 ? $this->common_model->dbSelect("session_id","sch_settings"," id=1 ")[0]->session_id : null;
         if (!$this->rbac->hasPrivilege('exam_group', 'can_view')) {
             access_denied();
         }
@@ -119,43 +86,37 @@ class Examination extends Admin_Controller {
         $result_card_groups = xcrud_get_instance();
         $result_card_groups->table('sh_result_card_groups');
         $result_card_groups->where('deleted_at IS NULL');
+        $result_card_groups->where('session_id', $active_session_id);
         $result_card_groups->show_primary_ai_field(false);
         $result_card_groups->columns('name,class_id,batch_id,exam_id');
         $result_card_groups->fields('name,class_id,batch_id,exam_id');
         $result_card_groups->relation('class_id', 'classes', 'id', 'class');
         $result_card_groups->relation('batch_id', 'sh_batches', 'section_id', 'section','','', '', '', '', 'class_id', 'class_id');
         $result_card_groups->relation('exam_id', 'sh_exams', 'id', 'title', '', '', true, '', '', '', '');
-        //$result_card_groups->relation('session_id', 'sessions', 'id', 'session', '', '', false, '', '', '', '');
-        //$result_card_groups->label('session_id', lang('session'));
         $result_card_groups->label('class_id', lang('class'));
         $result_card_groups->label('batch_id', lang('section'));
         $result_card_groups->label('name', lang('name'));
         $result_card_groups->label('exam_id', lang('assessments'));
         $result_card_groups->replace_remove('soft_delete');
-        //$result_card_groups->before_insert('new_subject_group');
-        //$result_card_groups->before_update('new_subject_group_update');
+        $result_card_groups->pass_var("sh_result_card_groups.session_id", $active_session_id);
         $result_card_groups->table_name(lang("result_card_groups"));
-        //$result_card_groups->load_view("view", "customview.php");
         $result_card_groups->unset_print();
         $result_card_groups->unset_csv();
         $result_card_groups->unset_title();
-        //$result_card_groups->unset_search();
         $result_card_groups->unset_limitlist();
 
         $exams = xcrud_get_instance();
         $exams->table('sh_exams');
         $exams->where('deleted_at IS NULL');
+        $exams->where('session_id', $active_session_id);
         $exams->show_primary_ai_field(false);
-        //$exams->relation('session_id', 'sessions', 'id', 'session', '', '', false, '', '', '', '');
         $exams->columns('title,start_date,end_date,total_marks,passing_marks');
         $exams->fields('title,start_date,end_date,total_marks,passing_marks');
-        //$exams->label('session_id', $this->lang->line('session'));
         $exams->label('title', $this->lang->line('assessment_name'));
         $exams->label('start_date', $this->lang->line('lbl_start_date'));
         $exams->label('end_date', $this->lang->line('lbl_end_date'));
         $exams->label('total_marks', $this->lang->line('total_marks'));
         $exams->label('passing_marks', $this->lang->line('passing_marks'));
-        //$exams->load_view("view", "customview.php");
         $exams->unset_print();
         $exams->before_insert('check_exam_session');
         $exams->before_update('check_exam_session_update');
@@ -164,74 +125,60 @@ class Examination extends Admin_Controller {
         $exams->unset_title();
         $exams->unset_search();
         $exams->unset_limitlist();
+        $exams->pass_var("sh_exams.session_id", $active_session_id);
         $exams->table_name('lbl_exam_session');
-        $data["exams_new"] = $exams->render();
         
         $exam_details = xcrud_get_instance();
         $exam_details->table('sh_exam_details');
         $exam_details->where('deleted_at IS NULL');
+        $exam_details->where('session_id', $active_session_id);
         $exam_details->columns('exam_id,class_id,batch_id,subject_group_id,subject_id');
         $exam_details->fields('exam_id,class_id,batch_id,subject_group_id,subject_id');
         $exam_details->relation('exam_id', 'sh_exams', 'id', 'title','','', true, '', '', '', '');
         $exam_details->relation('class_id', 'classes', 'id', 'class');
         $exam_details->relation('batch_id', 'sh_batches', 'section_id', 'section','','', true, '', '', 'class_id', 'class_id');
         $exam_details->relation('subject_id', 'sh_subjects_with_group', 'subject_id', 'name','','', true, '', '', 'subject_group_id', 'subject_group_id');
-        //$exam_details->relation('session_id', 'sessions', 'id', 'session', '', '', false, '', '', '', '');
         $exam_details->relation('subject_group_id', 'sh_subject_groups', 'id', 'group_name', '', '', false, '', '', 'class_id', 'class_id');
-        //$exam_details->label('session_id', $this->lang->line('session'));
         $exam_details->label('exam_id', $this->lang->line('assessments'));
         $exam_details->label('class_id', $this->lang->line('class'));
         $exam_details->label('batch_id', $this->lang->line('section'));
         $exam_details->label('subject_id', $this->lang->line('subject'));
-        //$exam_details->label('start_time', $this->lang->line('start_time'));
-       // $exam_details->label('end_time', $this->lang->line('end_time'));
         $exam_details->label('total_marks', $this->lang->line('total_marks'));
-        //$exam_details->label('exam_date', $this->lang->line('lbl_exam_date'));
         $exam_details->label('passing_marks', $this->lang->line('passing_marks'));
         $exam_details->label('subject_group_id', $this->lang->line('subject_group'));
-        //$exam_details->load_view("view", "customview.php");
         $exam_details->unset_print();
         $exam_details->replace_remove('soft_delete');
         $exam_details->replace_insert('custom_exam_details');
         $exam_details->unset_csv();
         $exam_details->unset_title();
-        //$exam_details->unset_search();
         $exam_details->unset_limitlist();
         $exam_details->table_name('lbl_exam_details');
-        // $exam_details->before_insert('check_exam_details');
+        $exam_details->pass_var("sh_exam_details.session_id", $active_session_id);
         $exam_details->replace_update('check_exam_details_update');
 
         $passing_rules = xcrud_get_instance();
         $passing_rules->table('sh_passing_rules');
         $passing_rules->where('deleted_at IS NULL');
+        $passing_rules->where('session_id', $active_session_id);
         $passing_rules->columns('exam_id,class_id,subject_group_id,subjects_which_passed,operator,minimum_percentage');
         $passing_rules->fields('exam_id,class_id,subject_group_id,operator,subjects_which_passed,minimum_percentage');
         $passing_rules->relation('exam_id', 'sh_exams', 'id', 'title');
         $passing_rules->relation('class_id', 'classes', 'id', 'class');
-        //$exam_details->relation('session_id', 'sessions', 'id', 'session', '', '', false, '', '', '', '');
         $passing_rules->relation('subject_group_id', 'sh_subject_groups', 'id', 'group_name', '', '', false, '', '', 'class_id', 'class_id');
         $passing_rules->relation('subjects_which_passed', 'sh_subjects_with_group', 'subject_id', 'name','','', true, '', '', 'subject_group_id', 'subject_group_id');
-        //$passing_rules->relation('batch_id', 'sh_batches', 'section_id', 'section','','', '', '', '', 'class_id', 'class_id');
-        //$passing_rules->relation('session_id', 'sessions', 'id', 'session', '', '', false, '', '', '', '');
-        //$passing_rules->label('session_id', $this->lang->line('session'));
         $passing_rules->label('exam_id', $this->lang->line('assessments'));
         $passing_rules->label('class_id', $this->lang->line('class'));
         $passing_rules->label('subjects_which_passed', $this->lang->line('subjects'));
         $passing_rules->label('subject_group_id', $this->lang->line('subject_group_name'));
-        //$passing_rules->label('batch_id', $this->lang->line('section'));
         $passing_rules->label('operator', $this->lang->line('operator_rule'));
         $passing_rules->label('minimum_subjects', $this->lang->line('minimum_subjects_pass'));
         $passing_rules->label('minimum_percentage', $this->lang->line('minimum_percentage'));
-        //$passing_rules->before_insert('passing_rules_insert');
-        //$passing_rules->replace_insert('replace_passing_rules_insert');
-        //$passing_rules->replace_update('replace_passing_rules_update');
-        //$passing_rules->load_view("view", "customview.php");
         $passing_rules->unset_print();
         $passing_rules->replace_remove('soft_delete');
         $passing_rules->unset_csv();
-        //$passing_rules->unset_search();
         $passing_rules->unset_limitlist();
         $passing_rules->unset_title();
+        $passing_rules->pass_var("sh_passing_rules.session_id", $active_session_id);
 
 
         $cum_passing_rules = xcrud_get_instance();
@@ -241,29 +188,19 @@ class Examination extends Admin_Controller {
         $cum_passing_rules->fields('class_id,result_card_group_id,subject_group_id,operator,subjects_which_passed,minimum_percentage,remarks');
         $cum_passing_rules->relation('result_card_group_id', 'sh_result_card_groups', 'id', 'name', '', '', false, '', '', 'class_id', 'class_id');
         $cum_passing_rules->relation('class_id', 'classes', 'id', 'class');
-        //$cum_passing_rules->relation('session_id', 'sessions', 'id', 'session', '', '', false, '', '', '', '');
         $cum_passing_rules->relation('subject_group_id', 'sh_subject_groups', 'id', 'group_name', '', '', false, '', '', 'class_id', 'class_id');
         $cum_passing_rules->relation('subjects_which_passed', 'sh_subjects_with_group', 'subject_id', 'name','','', true, '', '', 'subject_group_id', 'subject_group_id');
-        //$cum_passing_rules->relation('batch_id', 'sh_batches', 'section_id', 'section','','', '', '', '', 'class_id', 'class_id');
-        //$cum_passing_rules->relation('session_id', 'sessions', 'id', 'session', '', '', false, '', '', '', '');
-        //$cum_passing_rules->label('session_id', $this->lang->line('session'));
         $cum_passing_rules->label('remarks', $this->lang->line('admin_remarks'));
         $cum_passing_rules->label('result_card_group_id', $this->lang->line('terms'));
         $cum_passing_rules->label('class_id', $this->lang->line('class'));
         $cum_passing_rules->label('subjects_which_passed', $this->lang->line('subjects'));
         $cum_passing_rules->label('subject_group_id', $this->lang->line('subject_group_name'));
-        //$cum_passing_rules->label('batch_id', $this->lang->line('section'));
         $cum_passing_rules->label('operator', $this->lang->line('operator_rule'));
         $cum_passing_rules->label('minimum_subjects', $this->lang->line('minimum_subjects_pass'));
         $cum_passing_rules->label('minimum_percentage', $this->lang->line('minimum_percentage'));
-        //$cum_passing_rules->before_insert('cum_passing_rules_insert');
-        //$cum_passing_rules->replace_insert('replace_cum_passing_rules_insert');
-        //$cum_passing_rules->replace_update('replace_cum_passing_rules_update');
-        //$cum_passing_rules->load_view("view", "customview.php");
         $cum_passing_rules->unset_print();
         $cum_passing_rules->replace_remove('soft_delete');
         $cum_passing_rules->unset_csv();
-        //$cum_passing_rules->unset_search();
         $cum_passing_rules->unset_limitlist();
         $cum_passing_rules->unset_title();
 
@@ -271,13 +208,12 @@ class Examination extends Admin_Controller {
         $grades = xcrud_get_instance();
         $grades->table('sh_grades');
         $grades->where('deleted_at IS NULL');
+        $grades->where('session_id', $active_session_id);
         $grades->show_primary_ai_field(false);
         $grades->relation('class_id', 'classes', 'id', 'class');
         $grades->columns('name,class_id,percent_from, percent_upto, color');
         $grades->fields('name,class_id, percent_from, percent_upto, color');
         $grades->change_type('color','text','#000000', array('id'=>"colorpicker"));
-        //$grades->change_type('description','textarea');
-        //$grades->label('description', lang('admin_remarks'));
         $grades->label('color', lang('color'));
         $grades->label('name', lang('lbl_grade_name'));
         $grades->label('percent_from', lang('lbl_percent_from'));
@@ -285,135 +221,38 @@ class Examination extends Admin_Controller {
         $grades->label('class_id', lang('class'));
         $grades->order_by('percent_from', 'desc');
         $grades->table_name(lang('lbl_grades'));
-        //$grades->load_view("view", "customview.php");
         $grades->before_insert('checkValidation');
         $grades->before_update('checkValidationUpdate');
         $grades->unset_print();
         $grades->unset_csv();
         $grades->unset_title();
-        //$grades->unset_search();
         $grades->unset_limitlist();
+        $grades->pass_var("sh_grades.session_id", $active_session_id);
         
 
         $subject_groups = xcrud_get_instance();
         $subject_groups->table('sh_subject_groups');
         $subject_groups->where('deleted_at IS NULL');
+        $subject_groups->where('session_id', $active_session_id);
         $subject_groups->show_primary_ai_field(false);
         $subject_groups->columns('group_name,class_id,batch_id,subjects');
         $subject_groups->fields('group_name,class_id,batch_id,subjects');
         $subject_groups->relation('class_id', 'classes', 'id', 'class');
         $subject_groups->relation('batch_id', 'sh_batches', 'section_id', 'section','','', true, '', '', 'class_id', 'class_id');
-        $subject_groups->relation('subjects', 'subjects', 'id', 'name', '', '', true, '', '', '', '');
-        //$subject_groups->relation('session_id', 'sessions', 'id', 'session', '', '', false, '', '', '', '');
-        //$subject_groups->label('session_id', lang('session'));
         $subject_groups->label('class_id', lang('class'));
         $subject_groups->label('batch_id', lang('section'));
         $subject_groups->label('group_name', lang('name'));
         $subject_groups->label('subjects', lang('subjects'));
         $subject_groups->before_insert('new_subject_group');
         $subject_groups->table_name(lang('subject_groups'));
-        //$subject_groups->load_view("view", "customview.php");
+        $subject_groups->pass_var('sh_subject_groups.session_id', $active_session_id);
         $subject_groups->unset_print();
         $subject_groups->unset_csv();
         $subject_groups->unset_title();
         $subject_groups->unset_limitlist();
 
-        /*if ($params != null && $params["tab"] === "exam_details") {
-            $data["selected_tab"] = $params["tab"];
-            $data["tab_subjects_selected_class_id"] = $params["class_id"];
-            $data["tab_subjects_selected_batch_id"] = $params["batch_id"];
-            $data["tab_subjects_selected_session_id"] = $params["session_id"];
-            if ($params["class_id"] != "all") {
-                if ($params["batch_id"] != "all") {
-                    $exam_details->where('class_id', $params["class_id"]);
-                    $exam_details->where('batch_id', $params["batch_id"]);
-                    $exam_details->where('session_id', $params["session_id"]);
-                    $exam_details->unset_add(false);
-                    $exam_details->pass_default('class_id', $params["class_id"]);
-                    $exam_details->pass_default('batch_id', $params["batch_id"]);
-                    $exam_details->pass_default('session_id', $params["session_id"]);
-                }
-                else{
-                    $exam_details->pass_default('class_id', $params["class_id"]);
-                    $exam_details->where('session_id',$params["session_id"]);
-                    $data2 = $this->common_model->dbSelect("id", "sh_batches", " class_id=" . $params['class_id'] . " ");
-                    $array = array();
-                    foreach ($data2 as $value) {
-                        $array[] = $value->id;
-                    }
-                    if (count($array) > 0) {
-                        $exam_details->where('batch_id', $array);
-                    } else {
-                        $exam_details->where('batch_id', "0");
-                    }
-                }
-            }
-        } else if ($params != null && $params["tab"] === "passing_rules") {
-            $data["selected_tab"] = $params["tab"];
-            $data["tab_rules_selected_class_id"] = $params["class_id"];
-            $data["tab_rules_selected_batch_id"] = $params["batch_id"];
-            $data["tab_rules_selected_session_id"] = $params["session_id"];
-            if ($params["class_id"] != "all") {
-                if ($params["batch_id"] != "all") {
-                    $passing_rules->where('class_id', $params["class_id"]);
-                    $passing_rules->where('batch_id', $params["batch_id"]);
-                    $passing_rules->where('session_id', $params["session_id"]);
-                    $passing_rules->unset_add(false);
-                    $passing_rules->pass_default('class_id', $params["class_id"]);
-                    $passing_rules->pass_default('batch_id', $params["batch_id"]);
-                    $passing_rules->pass_default('session_id', $params["session_id"]);
-                }
-                else{
-                    $passing_rules->pass_default('class_id', $params["class_id"]);
-                    $passing_rules->where('class_id', $params["class_id"]);
-                    $passing_rules->where('session_id', $params["session_id"]);
-                }
-            }
-        } else if ($params != null && $params["tab"] === "tab_subject_groups") {
-            $data["selected_tab"] = $params["tab"];
-            $data["tab_subject_groups_class_id"] = $params["class_id"];
-            $data["tab_subject_groups_batch_id"] = $params["batch_id"];
-            if ($params["class_id"] != "all") {
-                if ($params["batch_id"] == "all") {
-                    $subject_groups->where("class_id", $params["class_id"]);
-                    $subject_groups->pass_default('class_id', $params["class_id"]);
-                    $subject_groups->pass_default('batch_id', $params["batch_id"]);
-                } else {
-                    $batch_id = $params["batch_id"];
-                    $subject_groups->where("class_id", $params["class_id"])->where("FIND_IN_SET($batch_id,batch_id)")->where("session_id", $params["session_id"]);
-                }
-            }
-        } else if($params != null && $params["tab"] === "tab_result_card_groups"){
-            $data["selected_tab"] = $params["tab"];
-            $data["tab_result_card_groups_selected_class_id"] = $params["class_id"];
-            $data["tab_result_card_groups_selected_batch_id"] = $params["batch_id"];
-            $data["tab_result_card_groups_selected_session_id"] = $params["session_id"];
-            if ($params["class_id"] != "all") {
-                if ($params["batch_id"] != "all") {
-                    $result_card_groups->where('class_id', $params["class_id"]);
-                    $result_card_groups->where('batch_id', $params["batch_id"]);
-                    $result_card_groups->where('session_id', $params["session_id"]);
-                    $result_card_groups->unset_add(false);
-                    $result_card_groups->pass_default('class_id', $params["class_id"]);
-                    $result_card_groups->pass_default('batch_id', $params["batch_id"]);
-                    $result_card_groups->pass_default('session_id', $params["session_id"]);
-                }
-                else{
-                    $result_card_groups->pass_default('class_id', $params["class_id"]);
-                    $result_card_groups->where('session_id',$params["session_id"]);
-                    $data2 = $this->common_model->dbSelect("id", "sh_batches", " class_id=" . $params['class_id'] . " ");
-                    $array = array();
-                    foreach ($data2 as $value) {
-                        $array[] = $value->id;
-                    }
-                    if (count($array) > 0) {
-                        $result_card_groups->where('batch_id', $array);
-                    } else {
-                        $result_card_groups->where('batch_id', "0");
-                    }
-                }
-            }
-        }*/
+
+        $data["sessions"] = $this->common_model->dbSelect("*","sessions"," 1 ");
 
         $data["subject_groups"] = $subject_groups->render();
         $data["exam_details"] = $exam_details->render();
@@ -421,6 +260,8 @@ class Examination extends Admin_Controller {
         $data["cum_passing_rules"] = $cum_passing_rules->render();
         $data["grades"] = $grades->render();
         $data["result_card_groups"] = $result_card_groups->render();
+        $data["exams_new"] = $exams->render();
+        $data["active_session_id"] = $active_session_id;
         $this->load->view('layout/header', $data);
         $this->load->view('admin/yexam/single_exam_settings', $data);
         $this->load->view('layout/footer', $data);
@@ -2201,5 +2042,93 @@ class Examination extends Admin_Controller {
 
         $data = $this->common_model->dbSelect("*","sh_skill_and_assessment_groups", " class_id=$request->class_id AND deleted_at IS NULL ");
         echo json_encode($data);
+    }
+
+    function restore_session_settings() {
+        $from = $this->input->post("session_from");
+        $to = $this->input->post("session_to");
+        $selected_tab = $this->input->post("selected_tab");
+
+        if($from != $to){
+            // restore it
+            $subject_groups = $this->common_model->dbSelect("*","sh_subject_groups", " session_id='$from' ");
+            $exams = $this->common_model->dbSelect("*","sh_exams", " session_id='$from' ");
+            $result_card_groups = $this->common_model->dbSelect("*","sh_result_card_groups", " session_id='$from' ");
+            $exam_details = $this->common_model->dbSelect("*","sh_exam_details", " session_id='$from' ");
+            $passing_rules = $this->common_model->dbSelect("*","sh_passing_rules", " session_id='$from' ");
+            $grades = $this->common_model->dbSelect("*","sh_grades", " session_id='$from' ");
+            
+            // copy subject groups
+            if(count($subject_groups) > 0){
+                foreach($subject_groups as $sg){
+                    $sg->id = '';
+                    $sg->session_id = $to;
+                    $sg->created_at = date("Y-m-d h:i:s");
+                    $sg = (array)$sg;
+                    $this->common_model->dbInsert('sh_subject_groups', $sg);
+                }
+            }
+
+            // copy exams
+            if(count($exams) > 0){
+                foreach($exams as $e){
+                    $e->id = '';
+                    $e->session_id = $to;
+                    $e->created_at = date("Y-m-d h:i:s");
+                    $e = (array)$e;
+                    $this->common_model->dbInsert('sh_exams', $e);
+                }
+            }
+
+            // copy exams details
+            if(count($exam_details) > 0){
+                foreach($exam_details as $ed){
+                    $ed->id = '';
+                    $ed->session_id = $to;
+                    $ed->created_at = date("Y-m-d h:i:s");
+                    $ed = (array)$ed;
+                    $this->common_model->dbInsert('sh_exam_details', $ed);
+                }
+            }
+
+            // copy passing rules
+            if(count($passing_rules) > 0){
+                foreach($passing_rules as $r){
+                    $r->id = '';
+                    $r->session_id = $to;
+                    $r->created_at = date("Y-m-d h:i:s");
+                    $r = (array)$r;
+                    $this->common_model->dbInsert('sh_passing_rules', $r);
+                }
+            }
+
+            // copy grades
+            if(count($grades) > 0){
+                foreach($grades as $g){
+                    $g->id = '';
+                    $g->session_id = $to;
+                    $g->created_at = date("Y-m-d h:i:s");
+                    $g = (array)$g;
+                    $this->common_model->dbInsert('sh_grades', $g);
+                }
+            }
+
+            // copy result card groups
+            if(count($result_card_groups) > 0){
+                foreach($result_card_groups as $rcg){
+                    $rcg->id = '';
+                    $rcg->session_id = $to;
+                    $rcg->created_at = date("Y-m-d h:i:s");
+                    $rcg = (array)$rcg;
+                    $this->common_model->dbInsert('sh_result_card_groups', $rcg);
+                }
+            }
+            $this->session->set_flashdata('success_message',"Exam settings copied $from to $to.");
+            redirect($_SERVER['HTTP_REFERER']);
+        } else {
+            // can't restore ot same session
+            $this->session->set_flashdata('error_message',"You can't copy to same session! choose two different sessions.");
+            redirect($_SERVER['HTTP_REFERER']);
+        }
     }
 }

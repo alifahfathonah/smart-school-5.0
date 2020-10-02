@@ -765,6 +765,7 @@ function custom_exam_details($postdata, $xcrud){
     $batches = explode(",",$postdata->get('batch_id'));
     $subjects = explode(",",$postdata->get('subject_id'));
     $exams = explode(",",$postdata->get('exam_id'));
+    $session_id = $postdata->get("session_id");
     $values = "";
     $db = Xcrud_db::get_instance();
     foreach($exams as $exam_id){
@@ -779,13 +780,13 @@ function custom_exam_details($postdata, $xcrud){
         }
         foreach($batches as $bth){
             foreach($subjects as $sub){
-                $values .= "(".$exam_id.",".$postdata->get('class_id').",".$bth.",".$sub.",".$total_marks.",".$passing_marks.",".$postdata->get('subject_group_id')."),";
+                $values .= "(".$exam_id.",".$postdata->get('class_id').",".$bth.",".$sub.",".$total_marks.",".$passing_marks.",".$postdata->get('subject_group_id').",".$session_id."),";
             }
         }
     }
     
     
-    $query = "INSERT INTO `sh_exam_details`(`exam_id`, `class_id`, `batch_id`, `subject_id`, `total_marks`, `passing_marks`, `subject_group_id`) VALUES ". rtrim($values,",");
+    $query = "INSERT INTO `sh_exam_details`(`exam_id`, `class_id`, `batch_id`, `subject_id`, `total_marks`, `passing_marks`, `subject_group_id`,`session_id`) VALUES ". rtrim($values,",");
     $db->query($query);
     return 1;
 }
