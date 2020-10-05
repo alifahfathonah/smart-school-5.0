@@ -2048,7 +2048,9 @@ class Examination extends Admin_Controller {
         $from = $this->input->post("session_from");
         $to = $this->input->post("session_to");
         $selected_tab = $this->input->post("selected_tab");
-
+        $from_session_name = $this->common_model->dbSelect("session","sessions"," id='$from' ")[0]->session;
+        $to_session_name = $this->common_model->dbSelect("session","sessions"," id='$to' ")[0]->session;
+        $response = array();
         if($from != $to){
             // restore it
             $subject_groups = $this->common_model->dbSelect("*","sh_subject_groups", " session_id='$from' ");
@@ -2061,69 +2063,113 @@ class Examination extends Admin_Controller {
             // copy subject groups
             if(count($subject_groups) > 0){
                 foreach($subject_groups as $sg){
-                    $sg->id = '';
-                    $sg->session_id = $to;
-                    $sg->created_at = date("Y-m-d h:i:s");
-                    $sg = (array)$sg;
-                    $this->common_model->dbInsert('sh_subject_groups', $sg);
+                    $where = " class_id='$sg->class_id' AND batch_id='$sg->batch_id' AND group_name='$sg->group_name' AND subjects='$sg->subjects' AND session_id='$to' AND deleted_at IS NULL ";
+                    $exists = $this->common_model->dbSelect("*","sh_subject_groups"," $where ");
+                    if(count($exists) == 0){
+                        $sg->id = '';
+                        $sg->session_id = $to;
+                        $sg->created_at = date("Y-m-d h:i:s");
+                        $sg = (array)$sg;
+                        $this->common_model->dbInsert('sh_subject_groups', $sg);
+                        $response[] = array("status"=> "success", "message" => $sg['group_name']." copied successfully into session - $to_session_name.");
+                    } else {
+                        $response[] = array("status"=> "danger", "message" => $sg->group_name." already exists in session - $to_session_name.");
+                    }
                 }
             }
 
             // copy exams
             if(count($exams) > 0){
                 foreach($exams as $e){
-                    $e->id = '';
-                    $e->session_id = $to;
-                    $e->created_at = date("Y-m-d h:i:s");
-                    $e = (array)$e;
-                    $this->common_model->dbInsert('sh_exams', $e);
+                    $where = " title='$e->title' AND start_date='$e->start_date' AND end_date='$e->end_date' AND session_id='$to' AND total_marks='$e->total_marks' AND passing_marks='$e->passing_marks' AND deleted_at IS NULL ";
+                    $exists = $this->common_model->dbSelect("*","sh_exams"," $where ");
+                    if(count($exists) == 0){
+                        $e->id = '';
+                        $e->session_id = $to;
+                        $e->created_at = date("Y-m-d h:i:s");
+                        $e = (array)$e;
+                        $this->common_model->dbInsert('sh_exams', $e);
+                        $response[] = array("status"=> "success", "message" => $e['title']." copied successfully into session - $to_session_name.");
+                    } else {
+                        $response[] = array("status"=> "danger", "message" =>$e->title." already exists in session - $to_session_name.");
+                    }
                 }
             }
 
             // copy exams details
             if(count($exam_details) > 0){
                 foreach($exam_details as $ed){
-                    $ed->id = '';
-                    $ed->session_id = $to;
-                    $ed->created_at = date("Y-m-d h:i:s");
-                    $ed = (array)$ed;
-                    $this->common_model->dbInsert('sh_exam_details', $ed);
+                    //echo "<pre/>"; print_r($ed); die();
+                    $where = " exam_id='$ed->exam_id' AND class_id='$ed->class_id' AND batch_id='$ed->batch_id' AND subject_id='$ed->subject_id' AND type='$ed->type' AND session_id='$to' AND subject_group_id='$ed->subject_group_id' AND deleted_at IS NULL ";
+                    $exists = $this->common_model->dbSelect("*","sh_exam_details"," $where ");
+                    if(count($exists) == 0){
+                        $ed->id = '';
+                        $ed->session_id = $to;
+                        $ed->created_at = date("Y-m-d h:i:s");
+                        $ed = (array)$ed;
+                        $this->common_model->dbInsert('sh_exam_details', $ed);
+                        $response[] = array("status"=> "success", "message" => "Exam detail under Exam ID ".$ed['exam_id']." copied successfully into session - $to_session_name.");
+                    } else {
+                        $response[] = array("status"=> "danger", "message" => "Exam detail already exists against (ID: $ed->id) into session - $to_session_name.");
+                    }
                 }
             }
 
             // copy passing rules
             if(count($passing_rules) > 0){
                 foreach($passing_rules as $r){
-                    $r->id = '';
-                    $r->session_id = $to;
-                    $r->created_at = date("Y-m-d h:i:s");
-                    $r = (array)$r;
-                    $this->common_model->dbInsert('sh_passing_rules', $r);
+                    //echo "<pre/>"; print_r($r); die();
+                    $where = " exam_id='$r->exam_id' AND class_id='$r->class_id' AND batch_id='$r->batch_id' AND minimum_percentage='$r->minimum_percentage' AND operator='$r->operator' AND subjects_which_passed='$r->subjects_which_passed' AND session_id='$to' AND subject_group_id='$r->subject_group_id' AND deleted_at IS NULL ";
+                    $exists = $this->common_model->dbSelect("*","sh_passing_rules"," $where ");
+                    if(count($exists) == 0) {
+                        $r->id = '';
+                        $r->session_id = $to;
+                        $r->created_at = date("Y-m-d h:i:s");
+                        $r = (array)$r;
+                        $inserted_id = $this->common_model->dbInsert('sh_passing_rules', $r);
+                        $response[] = array("status"=> "success", "message" => "Passing rule Against (ID:$inserted_id) copied successfully into session - $to_session_name.");
+                    } else {
+                        $response[] = array("status"=> "danger", "message" => "Passing rule already exists against (ID: $r->id) into session - $to_session_name.");
+                    }
                 }
             }
 
             // copy grades
             if(count($grades) > 0){
                 foreach($grades as $g){
-                    $g->id = '';
-                    $g->session_id = $to;
-                    $g->created_at = date("Y-m-d h:i:s");
-                    $g = (array)$g;
-                    $this->common_model->dbInsert('sh_grades', $g);
+                    $where = " name='$g->name' AND class_id='$g->class_id' AND percent_from='$g->percent_from' AND percent_upto='$g->percent_upto' AND description='$g->description' AND color='$g->color' AND session_id='$to' AND deleted_at IS NULL ";
+                    $exists = $this->common_model->dbSelect("*","sh_grades"," $where ");
+                    if(count($exists) == 0) {
+                        $g->id = '';
+                        $g->session_id = $to;
+                        $g->created_at = date("Y-m-d h:i:s");
+                        $g = (array)$g;
+                        $this->common_model->dbInsert('sh_grades', $g);
+                        $response[] = array("status"=> "success", "message" => $g['name']." copied successfully into session - $to_session_name.");
+                    } else {
+                        $response[] = array("status"=> "danger", "message" => "$g->name already exists into session - $to_session_name.");
+                    }
                 }
             }
 
             // copy result card groups
             if(count($result_card_groups) > 0){
                 foreach($result_card_groups as $rcg){
-                    $rcg->id = '';
-                    $rcg->session_id = $to;
-                    $rcg->created_at = date("Y-m-d h:i:s");
-                    $rcg = (array)$rcg;
-                    $this->common_model->dbInsert('sh_result_card_groups', $rcg);
+                    $where = " name='$rcg->name' AND class_id='$rcg->class_id' AND batch_id='$rcg->batch_id' AND session_id='$to' AND deleted_at IS NULL ";
+                    $exists = $this->common_model->dbSelect("*","sh_result_card_groups"," $where ");
+                    if(count($exists) == 0) {
+                        $rcg->id = '';
+                        $rcg->session_id = $to;
+                        $rcg->created_at = date("Y-m-d h:i:s");
+                        $rcg = (array)$rcg;
+                        $this->common_model->dbInsert('sh_result_card_groups', $rcg);
+                        $response[] = array("status"=> "success", "message" => $rcg['name']." copied successfully into session - $to_session_name.");
+                    } else {
+                        $response[] = array("status"=> "danger", "message" => "$rcg->name already exists into session - $to_session_name.");
+                    }
                 }
             }
-            $this->session->set_flashdata('success_message',"Exam settings copied $from to $to.");
+            $this->session->set_flashdata('success_message',$response);
             redirect($_SERVER['HTTP_REFERER']);
         } else {
             // can't restore ot same session

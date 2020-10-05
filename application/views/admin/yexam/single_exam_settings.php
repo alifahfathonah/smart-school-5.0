@@ -11,7 +11,13 @@
         <?php } ?>
 
         <?php if ($this->session->flashdata('success_message')) { ?>
-            <div class="alert alert-success"> <?= $this->session->flashdata('success_message') ?> </div>
+            <div class="alert alert-success"> 
+                <ul>
+                    <?php foreach($this->session->flashdata('success_message') as $msg) { ?>
+                        <li><span class="text-<?= $msg['status'] ?>"><?= $msg["message"] ?></span></li>
+                    <?php } ?>
+                </ul>
+            </div>
         <?php } ?>
 
         <!--.row-->
