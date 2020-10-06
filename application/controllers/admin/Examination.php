@@ -239,6 +239,7 @@ class Examination extends Admin_Controller {
         $subject_groups->fields('group_name,class_id,batch_id,subjects');
         $subject_groups->relation('class_id', 'classes', 'id', 'class');
         $subject_groups->relation('batch_id', 'sh_batches', 'section_id', 'section','','', true, '', '', 'class_id', 'class_id');
+        $subject_groups->relation('subjects', 'subjects', 'id', 'name','','', true, '', '', '', '');
         $subject_groups->label('class_id', lang('class'));
         $subject_groups->label('batch_id', lang('section'));
         $subject_groups->label('group_name', lang('name'));
