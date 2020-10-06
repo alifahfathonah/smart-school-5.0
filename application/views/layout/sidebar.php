@@ -832,7 +832,11 @@
                         $this->rbac->hasPrivilege('item_category', 'can_view') ||
                         $this->rbac->hasPrivilege('item_category', 'can_view') ||
                         $this->rbac->hasPrivilege('store', 'can_view') ||
-                        $this->rbac->hasPrivilege('supplier', 'can_view'))) {
+                        $this->rbac->hasPrivilege('supplier', 'can_view') ||
+                        $this->rbac->hasPrivilege('y_school_store', 'can_view') ||
+                        $this->rbac->hasPrivilege('y_sell_items', 'can_view') ||
+                        $this->rbac->hasPrivilege('y_school_store_orders', 'can_view')
+                        )) {
                     ?>
                     <li class="treeview <?php echo set_Topmenu('Inventory'); ?>">
                         <a href="#">
@@ -863,15 +867,13 @@
                                 <li class="<?php echo set_Submenu('itemstore/index'); ?>"><a href="<?php echo base_url(); ?>admin/itemstore"><i class="fa fa-angle-double-right"></i><?php echo $this->lang->line('inventory_store'); ?></a></li>
                                 <?php
                             }
-                            if ($this->rbac->hasPrivilege('supplier', 'can_view')) {
-                                ?>
+                            if ($this->rbac->hasPrivilege('supplier', 'can_view')) { ?>
                                 <li class="<?php echo set_Submenu('itemsupplier/index'); ?>"><a href="<?php echo base_url(); ?>admin/itemsupplier"><i class="fa fa-angle-double-right"></i><?php echo $this->lang->line('item_supplier'); ?></a></li>
-                            <?php } if ($this->rbac->hasPrivilege('', 'can_view')) {
-                                ?>
+                            <?php } if ($this->rbac->hasPrivilege('y_school_store', 'can_view')) { ?>
                                 <li class="<?php echo set_Submenu('schoolstore/index'); ?>"><a href="<?php echo base_url(); ?>admin/schoolstore/index"><i class="fa fa-angle-double-right"></i><?php echo $this->lang->line('school_store'); ?></a></li>
-
+                            <?php } if ($this->rbac->hasPrivilege('y_sell_items', 'can_view')) { ?>
                                 <li class="<?php echo set_Submenu('schoolstore/sell_items'); ?>"><a href="<?php echo base_url(); ?>admin/schoolstore/sell_items"><i class="fa fa-angle-double-right"></i><?php echo $this->lang->line('sell_items'); ?></a></li>
-
+                            <?php } if ($this->rbac->hasPrivilege('y_school_store_orders', 'can_view')) { ?>
                                 <li class="<?php echo set_Submenu('schoolstore/orders'); ?>"><a href="<?php echo base_url(); ?>admin/schoolstore/orders"><i class="fa fa-angle-double-right"></i><?php echo $this->lang->line('school_store_orders'); ?></a></li>
                             <?php } ?>
                         </ul>
