@@ -39,6 +39,7 @@ $(document).ready(function () {
       },
     });
   });
+
   $(document).on("click", ".submit_session", function () {
     var $this = $(this);
     var datastring = $("form#form_modal_session").serialize();

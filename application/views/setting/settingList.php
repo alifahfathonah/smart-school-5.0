@@ -862,7 +862,7 @@
 
     $(".edit_setting").on('click', function (e) {
         var $this = $(this);
-        $this.button('loading');
+        //$this.button('loading');
         $.ajax({
             url: '<?php echo site_url("schsettings/ajax_schedit") ?>',
             type: 'POST',
@@ -883,7 +883,7 @@
                     window.location.reload(true);
                 }
 
-                $this.button('reset');
+                //$this.button('reset');
             }
         });
     });
