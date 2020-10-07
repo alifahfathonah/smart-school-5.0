@@ -31,6 +31,7 @@ class Schoolstore extends Admin_Controller {
         $xcrud->button('javascript:customPrint({id})','Print','fa fa-print', 'myclass');
         $xcrud->button('javascript:customPrintPOS({id})','POS Print','fa fa-print', 'myclass');
         $xcrud->disabled('parent_id');
+        $xcrud->order_by('orders.id','desc');
         //$xcrud->replace_update("custom_order_update");
         
         $order_list = $xcrud->nested_table('item_id','id','order_details','order_id');
@@ -272,9 +273,10 @@ class Schoolstore extends Admin_Controller {
 
         if(count($data) > 0){
             $total = 0;
+            $slip_no = str_pad($id, 11, '0', STR_PAD_LEFT);
             $table = "<table class='table table-default' id='mytable'>
                 <tr><td colspan='4'><h4 style='text-align:center; font-weight:bold;'>".$this->session->userdata('admin')['school_name']."</h4></td></tr>
-                <tr><td colspan='4'>Slip: 00000000000</td></tr>
+                <tr><td colspan='4'>Slip: ".$slip_no."</td></tr>
                 <tr><td colspan='2'>Staff: ".$this->session->userdata('admin')['username']."</td><td colspan='2'>Trans: ".$data[0]->id."</td></tr>
                 <tr><td colspan='4'>Date: ".$data[0]->created_at."</td></tr>
                 <tr><td colspan='4'>**** POS Customer ****</td></tr>
@@ -284,7 +286,7 @@ class Schoolstore extends Admin_Controller {
                     $total += ($d->price * $d->quantity);
                 }
                 $table .= "<tr><th colspan='2' style='text-align:left;'>Total</th><td colspan='2' style='text-align:right;'>".$currency_symbol.$total."</td></tr>
-                <tr><th colspan='4' style='text-align:left;'>Welcome Again</th></tr>
+                <tr><th colspan='4' style='text-align:left;'>Thanks for your Patronage.</th></tr>
             </table>";
         } else {
           $table .= "<table class='table table-default' id='mytable'><tr><td>No record found!</td></tr></table>";  

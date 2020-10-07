@@ -266,6 +266,7 @@ class Student extends Admin_Controller {
         // $this->form_validation->set_rules('rte', $this->lang->line('rtl'), 'trim|required|xss_clean');
         $this->form_validation->set_rules('guardian_name', $this->lang->line('guardian_name'), 'trim|required|xss_clean');
         $this->form_validation->set_rules('guardian_phone', $this->lang->line('guardian_phone'), 'trim|required|xss_clean');
+        $this->form_validation->set_rules('guardian_email', $this->lang->line('guardian_email'), 'trim|required|xss_clean|email');
 
         if (!$this->sch_setting_detail->adm_auto_insert) {
 
@@ -315,10 +316,6 @@ class Student extends Admin_Controller {
             if (empty($hostel_room_id)) {
                 $hostel_room_id = 0;
             }
-
-
-
-
 
             $data = array(
                 'firstname' => $this->input->post('firstname'),

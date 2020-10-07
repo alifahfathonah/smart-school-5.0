@@ -191,13 +191,8 @@ class Accounts extends Admin_Controller {
         $balance = $opening_balance;
         if(count($result) > 0){
             foreach($result as $key=>$res){
-                if($res->type == "debit"){
-                    $balance = $balance + $res->amount;
-                    $result[$key]->balance = $balance;
-                } else if($res->type == "credit"){
-                    $balance = $balance - $res->amount;
-                    $result[$key]->balance = $balance;
-                }
+                $balance = $balance + $res->amount;
+                $result[$key]->balance = $balance;
             }
 
             $opening_balance = number_format($opening_balance, 2, '.', ',');
@@ -289,98 +284,63 @@ class Accounts extends Admin_Controller {
         $request = json_decode($postdata);
         $from_date = to_mysql_date($request->from_date);
         $to_date = to_mysql_date($request->to_date);
+        $total_balance = 0.0;
+        $total_debit_balance = 0.0;
+        $total_credit_balance = 0.0;
 
-        $sql = "SELECT a.*,t.amount, t.type as transcation_type FROM y_accounts a LEFT JOIN y_transctions t ON a.id=t.y_account_id WHERE a.deleted_at IS NULL AND t.deleted_at IS NULL AND t.created_at BETWEEN '$from_date' AND '$to_date'";
-        $accounts = $this->common_model->dbQuery($sql);
-        $data = array();
+        $accounts = $sql = $this->common_model->dbSelect("*","y_accounts"," deleted_at IS NULL ");
         if(count($accounts) > 0){
-            $prev_account_id=0;
-            foreach($accounts as $ac){
-                if($prev_account_id == 0){
-                    $arr = new stdClass();
-                    $arr->id = $ac->id;
-                    $arr->account_no = $ac->account_no;
-                    $arr->account_title = $ac->account_title;
-                    $arr->account_type = $ac->account_type;
-                    $arr->memo = $ac->memo;
-                    $arr->balance = $ac->balance;
-                    $arr->opening_balance = $ac->opening_balance;
-                    $arr->opening_balance_date = $ac->opening_balance_date;
-                    $arr->opening_balance_type = $ac->opening_balance_type;
-                    $arr->created_at = $ac->created_at;
-                    $arr->updated_at = $ac->updated_at;
-                    $arr->deleted_at = $ac->deleted_at;
-                    $arr->transcation_type = $ac->transcation_type;
-                    $arr->credit = 0;
-                    $arr->debit = 0;
-                    if($ac->transcation_type == "credit"){
-                        $arr->credit = $ac->amount;
-                    } else if($ac->transcation_type == "debit"){
-                        $arr->debit = $ac->amount;
+            foreach($accounts as $acc) {
+                $acc->credit = 0;
+                $acc->debit = 0;
+                
+                $ledger = $this->get_ledger2($acc->id, $from_date, $to_date);
+                $ledger_balance = 0;
+                $ledger_type = null;
+                if(count($ledger) > 0){
+                    $ledger_balance = $ledger[count($ledger)-1]->balance;
+                    $ledger_type = $ledger[count($ledger)-1]->type;
+
+                    if($acc->opening_balance_type == "debit") {
+                        if($ledger_type == "debit"){
+                            $acc->debit += $acc->opening_balance + $ledger_balance;
+                        } else if ($ledger_type == "credit") {
+                            $acc->debit += $acc->opening_balance - $ledger_balance;
+                        }
+                    } else if ($acc->opening_balance_type == "credit") {
+                        if($ledger_type == "debit"){
+                            $acc->debit += $acc->opening_balance - $ledger_balance;
+                        } else if($ledger_type == "credit") {
+                            $acc->credit += $acc->opening_balance + $ledger_balance;
+                        }
                     }
-                    $data[$ac->id] = $arr;
-                    $prev_account_id = $ac->id;
+
                 } else {
-                    if($prev_account_id == $ac->id){
-                        //same account
-                        if($ac->transcation_type == "credit"){
-                            $data[$ac->id]->credit += $ac->amount;
-                            $prev_account_id = $ac->id;
-                        } else if($ac->transcation_type == "debit"){
-                            $data[$ac->id]->debit += $ac->amount;
-                            $prev_account_id = $ac->id;
-                        }
-                    } else {
-                        //different account
-                        $arr = new stdClass();
-                        $arr->id = $ac->id;
-                        $arr->account_no = $ac->account_no;
-                        $arr->account_title = $ac->account_title;
-                        $arr->account_type = $ac->account_type;
-                        $arr->memo = $ac->memo;
-                        $arr->balance = $ac->balance;
-                        $arr->opening_balance = $ac->opening_balance;
-                        $arr->opening_balance_date = $ac->opening_balance_date;
-                        $arr->opening_balance_type = $ac->opening_balance_type;
-                        $arr->created_at = $ac->created_at;
-                        $arr->updated_at = $ac->updated_at;
-                        $arr->deleted_at = $ac->deleted_at;
-                        $arr->transcation_type = $ac->transcation_type;
-                        $arr->credit = 0;
-                        $arr->debit = 0;
-                        if($ac->transcation_type == "credit"){
-                            $arr->credit = $ac->amount;
-                        } else if($ac->transcation_type == "debit"){
-                            $arr->debit = $ac->amount;
-                        }
-                        $data[$ac->id] = $arr;
-                        $prev_account_id = $ac->id;
+                    if($acc->opening_balance_type == "debit") {
+                        $acc->debit = $acc->opening_balance;
+                    } else if($acc->opening_balance_type == "credit") {
+                        $acc->credit = $acc->opening_balance;
                     }
                 }
+                $total_credit_balance += $acc->credit;
+                $total_debit_balance += $acc->debit;
             }
-            $new_data = array();
-            $total_balance = 0.0;
-            $total_debit_balance = 0.0;
-            $total_credit_balance = 0.0;
-            if(count($data) > 0) {
-                foreach($data as $d){
-                    if($d->opening_balance_date >= to_mysql_date($request->from_date) && $d->opening_balance_date <= to_mysql_date($request->to_date)){
-                        $total_debit_balance += $d->opening_balance;
-                        $total_credit_balance += $d->opening_balance;
-                    }
-                    $total_debit_balance += $d->debit;
-                    $total_credit_balance += $d->credit;
-                    $total_balance += $d->balance;
-                    $d->debit = number_format($d->debit, 2, '.', ',');
-                    $d->credit = number_format($d->credit, 2, '.', ',');
-                    $d->balance = number_format($d->balance, 2, '.', ',');
-                    array_push($new_data, $d); 
+            foreach($accounts as $ac){
+                if($ac->opening_balance > 0) {
+                    $ac->opening_balance = number_format($ac->opening_balance, 2, '.', ',');
+                }
+
+                if($ac->credit > 0) {
+                    $ac->credit = number_format($ac->credit, 2, '.', ',');
+                }
+
+                if($ac->debit > 0) {
+                    $ac->debit = number_format($ac->debit, 2, '.', ',');
                 }
             }
-            $total_debit_balance = number_format($total_debit_balance, 2, '.', ',');
             $total_credit_balance = number_format($total_credit_balance, 2, '.', ',');
-            $total_balance = number_format($total_balance, 2, '.', ',');
-            $response = array("status"=>"success", "message"=>"data found", "data"=>$new_data, "total_balance"=> $total_balance, "total_debit_balance"=>$total_debit_balance, "total_credit_balance"=> $total_credit_balance);
+            $total_debit_balance = number_format($total_debit_balance, 2, '.', ',');
+            $response = array("status"=>"success", "message"=>"data found", "data"=>$accounts, "total_balance"=> $total_balance, "total_debit_balance"=>$total_debit_balance, "total_credit_balance"=> $total_credit_balance);
         } else {
             $response = array("status"=>"error", "message"=>"data not found", "data"=>array());
         }
@@ -390,5 +350,18 @@ class Accounts extends Admin_Controller {
     public function all(){
         $data = $this->common_model->dbSelect("*","y_accounts"," deleted_at IS NULL ");
         echo json_encode($data);
+    }
+
+    public function get_ledger2($account_id, $from_date, $to_date){
+        $sql = "SELECT t.id, t.amount, t.type, 0 as balance FROM y_transctions t INNER JOIN y_journal_voucher j ON t.y_journal_voucher_id=j.id INNER JOIN y_accounts a ON t.y_account_id=a.id WHERE t.y_account_id='$account_id' AND t.deleted_at IS NULL AND j.date BETWEEN '$from_date' AND '$to_date'";
+        $result = $this->common_model->dbQuery($sql);
+        $balance = 0;
+        if(count($result) > 0){
+            foreach($result as $key=>$res){
+                $balance = $balance + $res->amount;
+                $result[$key]->balance = $balance;
+            }
+        }
+        return $result;
     }
 }

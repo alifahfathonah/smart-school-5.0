@@ -190,7 +190,6 @@ if ($this->session->flashdata('success_msg')) {
                         <h4 class="modal-title" id="sessionModalLabel"><?php echo $this->lang->line('session'); ?></h4>
                     </div>
                     <div class="modal-body sessionmodal_body pb0">
-
                     </div>
                     <div class="modal-footer">
 
@@ -723,3 +722,11 @@ if (isset($title)) {
 <script src="<?php echo base_url(); ?>assets/js/app.js?v=<?= date("h.i.s") ?>"></script>
 <!-- Canvas Graph -->
 <script src="<?php echo base_url(); ?>assets/js/jquery.canvasjs.min.js"></script>
+<!-- Select with search -->
+<script>
+$(document).ready(function(){
+    $('.select2-with-search').select2({
+        //minimumInputLength: 1 // only start searching when the user has input 3 or more characters
+    });
+});
+</script>

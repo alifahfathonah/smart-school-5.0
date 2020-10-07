@@ -48,7 +48,7 @@
 		                    				<div class="col-md-4 col-md-offset-8">
 			                    				<div class="form-group">
 			                    					<label>Order By</label>
-			                    					<select class="form-control" name="order_by">
+			                    					<select class="form-control select2-with-search" name="order_by">
 			                    						<?php foreach($parents as $p) { ?>
 			                    							<option value="<?php echo $p->id.','.$p->childs; ?>"><?php echo $p->username ." (". $p->guardian_name . ")"; ?></option>
 			                    						<?php } ?>

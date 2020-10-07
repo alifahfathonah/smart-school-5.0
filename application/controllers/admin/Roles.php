@@ -53,8 +53,7 @@ class Roles extends Admin_Controller {
 
         $data['role'] = $role;
         $role_permission = $this->role_model->find($role['id']);
-
-
+        
         $data['role_permission'] = $role_permission;
 
         if ($this->input->server('REQUEST_METHOD') == "POST") {

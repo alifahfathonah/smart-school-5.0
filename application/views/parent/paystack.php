@@ -17,7 +17,7 @@
         			e.preventDefault();
         			var handler = PaystackPop.setup({
                         key: '<?php echo $params['key']; ?>',
-                        email: 'ukeredi@gmail.com',
+                        email: '<?php echo $email; ?>',
                         amount: <?php echo ($params['total'] * 100); ?>,
                         metadata: {
                             custom_fields: [

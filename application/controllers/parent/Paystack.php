@@ -18,8 +18,13 @@ class Paystack extends Parent_Controller {
         $this->session->set_userdata('sub_menu', 'book/index');
         $data = array();
         $data['params'] = $this->session->userdata('params');
+        $student_id = $this->session->userdata('students')['student_id'];
+        $email = $this->common_model->dbSelect("guardian_email","students"," id='$student_id' ");
+        $data["email"] = "ukeredi@gmail.com";
+        if(Count($email) > 0){
+            $data["email"] = $email[0]->guardian_email;
+        }
         $data['setting'] = $this->setting;
-
         $this->load->view('parent/paystack', $data);
     }
 
