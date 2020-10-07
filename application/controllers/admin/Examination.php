@@ -358,6 +358,12 @@ class Examination extends Admin_Controller {
         $this->session->set_userdata('top_menu', 'Examinations_New');
         $this->session->set_userdata('sub_menu', 'Examinations_New/markexam');
 
+        $data["role"] = "";
+        //echo "<pre/>"; print_r($this->session->userdata("admin")); die();
+        foreach($this->session->userdata("admin")["roles"] as $key=>$a){
+            $data["role_id"] = $a;
+            $data["role"] = $key;
+        }
         $this->load->view('layout/header', $data);
         $this->load->view("admin/yexam/marksheet",$data);
         $this->load->view('layout/footer', $data);
@@ -365,6 +371,19 @@ class Examination extends Admin_Controller {
 
     public function getSessions(){
         $data = $this->common_model->dbSelect("*","sessions"," 1 ");
+        echo json_encode($data);
+    }
+
+    public function getSessions2(){
+        $postdata = file_get_contents("php://input");
+        $request = json_decode($postdata);
+        
+        if($request->role_name == "Admin" || $request->role_name == "Super Admin") {
+            $data = $this->common_model->dbSelect("*","sessions"," 1 ");
+        } else {
+            $session_id = $this->common_model->dbSelect("session_id","sch_settings"," 1 ")[0]->session_id;
+            $data = $this->common_model->dbSelect("*","sessions"," id='$session_id' ");
+        }
         echo json_encode($data);
     }
 
@@ -578,6 +597,14 @@ class Examination extends Admin_Controller {
         $data = array();
         $this->session->set_userdata('top_menu', 'Examinations_New');
         $this->session->set_userdata('sub_menu', 'Examinations_New/majorSheet');
+
+        $data["role"] = "";
+        //echo "<pre/>"; print_r($this->session->userdata("admin")); die();
+        foreach($this->session->userdata("admin")["roles"] as $key=>$a){
+            $data["role_id"] = $a;
+            $data["role"] = $key;
+        }
+
         $this->load->view('layout/header', $data);
         $this->load->view('admin/yexam/majorsheet', $data);
         $this->load->view('layout/footer', $data);

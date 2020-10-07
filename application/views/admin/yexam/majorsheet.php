@@ -140,7 +140,7 @@
 </script>
 
 <!-- Content Wrapper. Contains page content -->
-<div class="content-wrapper" ng-controller="majorSheetController" ng-init="initAcademicYears();initClasses();initExams();" >
+<div class="content-wrapper" ng-controller="majorSheetController" ng-init="initAcademicYears('<?php echo $role; ?>');initClasses();initExams();" >
     
     <!-- Overlay DIV -->
     <div id="myNav" class="overlay">

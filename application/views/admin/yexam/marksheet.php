@@ -23,7 +23,7 @@
     }
 </script>
 <!-- Content Wrapper. Contains page content -->
-<div class="content-wrapper" ng-controller="marksheetController" ng-init="initSessions(); initClasses();">
+<div class="content-wrapper" ng-controller="marksheetController" ng-init="initSessions('<?php echo  $role; ?>'); initClasses();">
     <section class="content-header">
         <h1><i class="fa fa-mortar-board"></i> <?php echo $this->lang->line('marksheet'); ?></h1>
     </section>
