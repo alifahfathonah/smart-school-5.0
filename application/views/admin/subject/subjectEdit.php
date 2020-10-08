@@ -51,6 +51,18 @@
                                     <input id="category" name="code" placeholder="" type="text" class="form-control"  value="<?php echo set_value('code', $subject['code']); ?>" />
                                     <span class="text-danger"><?php echo form_error('code'); ?></span>
                                 </div>
+
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1"><?php echo $this->lang->line('teachers'); ?></label> <small class="req"> *</small>
+                                    <select id="teacher_id" name="teacher_id" class="form-control">
+                                        <option value="">--Select a teacher--</option>
+                                        <?php foreach($teacherlist as $thr) { ?>
+                                            <option value="<?= $thr['id']; ?>" <?php if($subject['teacher_id'] == $thr['id']){ echo "selected"; }?>><?= $thr['name'] ." ". $thr['surname']; ?></option>
+                                        <?php } ?>
+                                    </select>
+                                    <span class="text-danger"><?php echo form_error('teacher_id'); ?></span>
+                                </div>
+
                             </div>
                             <div class="box-footer">
                                 <button type="submit" class="btn btn-info pull-right"><?php echo $this->lang->line('save'); ?></button>
@@ -81,6 +93,7 @@
                                         <th><?php echo $this->lang->line('subject'); ?>
                                             <?php echo $this->lang->line('type'); ?>
                                         </th>
+                                        <th><?php echo $this->lang->line('teacher_id'); ?></th>
                                         <th class="text-right no-print"><?php echo $this->lang->line('action'); ?></th>
                                     </tr>
                                 </thead>
@@ -92,7 +105,8 @@
                                         <tr>
                                             <td class="mailbox-name"> <?php echo $subject['name'] ?></td>
                                             <td class="mailbox-name"><?php echo $subject['code'] ?></td>
-                                                   <td class="mailbox-name"><?php echo ucfirst($subject['type']) ?></td>
+                                            <td class="mailbox-name"><?php echo ucfirst($subject['type']) ?></td>
+                                            <td class="mailbox-name"><?php echo $subject['teacher_name'] ?></td>
                                             <td class="mailbox-date pull-right no-print">
                                                 <?php
                                                 if ($this->rbac->hasPrivilege('subject', 'can_edit')) {

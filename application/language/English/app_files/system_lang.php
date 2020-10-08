@@ -1450,3 +1450,4 @@ $lang['approvals'] = 'Approvals';
 $lang['pending_requests'] = 'Pending Requests';
 $lang['history'] = 'History';
 $lang['requisition_history'] = 'Requisition History';
+$lang['teacher_id'] = 'Teacher';

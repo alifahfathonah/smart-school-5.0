@@ -10,11 +10,11 @@ class Subject_model extends MY_Model {
     }
 
     public function get($id = null) {
-        $this->db->select()->from('subjects');
+        $this->db->select('subjects.*, concat(staff.name," ",staff.surname) as teacher_name')->from('subjects')->join('staff', 'staff.id = subjects.teacher_id', 'left');
         if ($id != null) {
-            $this->db->where('id', $id);
+            $this->db->where('subjects.id', $id);
         } else {
-            $this->db->order_by('id');
+            $this->db->order_by('subjects.id');
         }
         $query = $this->db->get();
         if ($id != null) {
