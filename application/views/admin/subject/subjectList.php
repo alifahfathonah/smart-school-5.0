@@ -46,7 +46,7 @@
                              ?>
                                        <span class="text-danger"><?php echo form_error('type'); ?></span>
                                
-                                <div class="form-group"><br>
+                                    <div class="form-group"><br>
                                         <label for="exampleInputEmail1"><?php echo $this->lang->line('subject_code'); ?></label>
                                         <input id="category" name="code" placeholder="" type="text" class="form-control"  value="<?php echo set_value('code'); ?>" />
                                         <span class="text-danger"><?php echo form_error('code'); ?></span>
@@ -62,6 +62,7 @@
                                         </select>
                                         <span class="text-danger"><?php echo form_error('teacher_id'); ?></span>
                                     </div>
+
                                 </div>
                             <div class="box-footer">
                                 <button type="submit" class="btn btn-info pull-right"><?php echo $this->lang->line('save'); ?></button>
@@ -94,7 +95,9 @@
                                             <?php echo $this->lang->line('type'); ?>
                                         </th>
                                         <th><?php echo $this->lang->line('teacher_id'); ?></th>
-                                        <th class="text-right no-print"><?php echo $this->lang->line('action'); ?></th>
+                                        <?php if($role_id != 2) { ?>
+                                            <th class="text-right no-print"><?php echo $this->lang->line('action'); ?></th>
+                                        <?php } ?>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -107,22 +110,24 @@
                                             <td class="mailbox-name"><?php echo $subject['code'] ?></td>
                                             <td class="mailbox-name"><?php echo ucfirst($subject['type']) ?></td>
                                             <td class="mailbox-name"><?php echo $subject['teacher_name'] ?></td>
-                                            <td class="mailbox-date pull-right no-print">
-                                                <?php
-                                                if ($this->rbac->hasPrivilege('subject', 'can_edit')) {
-                                                    ?>
-                                                    <a href="<?php echo base_url(); ?>admin/subject/edit/<?php echo $subject['id'] ?>" class="btn btn-default btn-xs"  data-toggle="tooltip" title="<?php echo $this->lang->line('edit'); ?>">
-                                                        <i class="fa fa-pencil"></i>
-                                                    </a>
+                                            <?php if($role_id != 2) { ?>
+                                                <td class="mailbox-date pull-right no-print">
                                                     <?php
-                                                }
-                                                if ($this->rbac->hasPrivilege('subject', 'can_delete')) {
-                                                    ?>
-                                                    <a href="<?php echo base_url(); ?>admin/subject/delete/<?php echo $subject['id'] ?>"class="btn btn-default btn-xs"  data-toggle="tooltip" title="<?php echo $this->lang->line('delete'); ?>" onclick="return confirm('<?php echo $this->lang->line('delete_confirm') ?>');">
-                                                        <i class="fa fa-remove"></i>
-                                                    </a>
-                                                <?php } ?>
-                                            </td>
+                                                    if ($this->rbac->hasPrivilege('subject', 'can_edit')) {
+                                                        ?>
+                                                        <a href="<?php echo base_url(); ?>admin/subject/edit/<?php echo $subject['id'] ?>" class="btn btn-default btn-xs"  data-toggle="tooltip" title="<?php echo $this->lang->line('edit'); ?>">
+                                                            <i class="fa fa-pencil"></i>
+                                                        </a>
+                                                        <?php
+                                                    }
+                                                    if ($this->rbac->hasPrivilege('subject', 'can_delete')) {
+                                                        ?>
+                                                        <a href="<?php echo base_url(); ?>admin/subject/delete/<?php echo $subject['id'] ?>"class="btn btn-default btn-xs"  data-toggle="tooltip" title="<?php echo $this->lang->line('delete'); ?>" onclick="return confirm('<?php echo $this->lang->line('delete_confirm') ?>');">
+                                                            <i class="fa fa-remove"></i>
+                                                        </a>
+                                                    <?php } ?>
+                                                </td>
+                                            <?php } ?>
                                         </tr>
                                         <?php
                                     }

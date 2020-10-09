@@ -35,7 +35,25 @@ class Subject extends Admin_Controller {
         }
         $teacherlist = $this->staff_model->getStaffbyrole($role = 2);
         $data['teacherlist'] = $teacherlist;
-        //echo "<pre/>"; print_r($data["teacherlist"]); die();
+
+        $role_id=0;
+        foreach($this->session->userdata("admin") as $key=>$d){
+            if($d == 2){
+                $role_id = $d;
+            }
+        }
+        
+        if($role_id == 2){
+            $newteacherlist = array();
+            foreach($subject_result as $res){
+                if($res['teacher_id'] == $this->session->userdata("admin")["id"]) {
+                    array_push($newteacherlist, $res);
+                }
+            }
+            $data["subjectlist"] = $newteacherlist;
+        }
+        $data["role_id"] = $role_id;
+        //echo "<pre/>"; print_r($newteacherlist); die();
         
         $this->form_validation->set_rules('name', $this->lang->line('subject_name'), 'trim|required|xss_clean|callback__check_name_exists');
         $this->form_validation->set_rules('type', $this->lang->line('type'), 'trim|required|xss_clean');
