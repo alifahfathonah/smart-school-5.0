@@ -396,8 +396,21 @@ class Examination extends Admin_Controller {
         if(count($subject_group_id) > 0){
             $subject_group_id = $subject_group_id[0]->id;
             $sql = "SELECT s.* FROM sh_subjects_with_group sg INNER JOIN subjects s ON sg.subject_id=s.id WHERE subject_group_id='$subject_group_id'";
-            $data = $this->common_model->dbQuery($sql);
-            $response = array("status"=>"error","message"=>"no data found", "data"=>$data);
+            $subjects = $this->common_model->dbQuery($sql);
+
+            $role_id=0;
+            foreach($this->session->userdata("admin") as $key=>$d){
+                if($d == 2){
+                    $role_id = $d;
+                }
+            }
+            if($role_id == 2){
+                $newsubjects = array();
+                $teacher_id = $this->session->userdata("admin")["id"];
+                $assigned_subjects = $this->common_model->dbSelect("*","subjects"," teacher_id='$teacher_id' ");
+                $subjects = $assigned_subjects;
+            }
+            $response = array("status"=>"error","message"=>"no data found", "data"=>$subjects);
         } else {
             $response = array("status"=>"error","message"=>"no data found", "data"=>array());
         }
