@@ -44,16 +44,22 @@ class Subject extends Admin_Controller {
         }
         
         if($role_id == 2){
+            $teacher_id = $this->session->userdata("admin")["id"];
+            $active_session_id = count($this->common_model->dbSelect("session_id","sch_settings"," id=1 ")) > 0 ? $this->common_model->dbSelect("session_id","sch_settings"," id=1 ")[0]->session_id : null;
+            
+            $sql = "SELECT s.id, s.name, s.code, s.type, s.is_active, s.created_at, s.updated_at, concat(st.name,' ',st.surname) as teacher_name, d.teacher_id as teacher_id FROM sh_exam_details d INNER JOIN subjects s ON d.subject_id=s.id INNER JOIN staff st ON st.id=d.teacher_id WHERE d.teacher_id='$teacher_id' AND d.session_id='$active_session_id' AND d.deleted_at IS NULL ";
+            $res = $this->common_model->dbQuery($sql);
+            
             $newteacherlist = array();
-            foreach($subject_result as $res){
-                if($res['teacher_id'] == $this->session->userdata("admin")["id"]) {
-                    array_push($newteacherlist, $res);
+            if(count($res) > 0){    
+                foreach($res as $r){
+                    array_push($newteacherlist, (array)$r);
                 }
             }
             $data["subjectlist"] = $newteacherlist;
         }
         $data["role_id"] = $role_id;
-        //echo "<pre/>"; print_r($newteacherlist); die();
+        //echo "<pre/>"; print_r($data[""]); die();
         
         $this->form_validation->set_rules('name', $this->lang->line('subject_name'), 'trim|required|xss_clean|callback__check_name_exists');
         $this->form_validation->set_rules('type', $this->lang->line('type'), 'trim|required|xss_clean');

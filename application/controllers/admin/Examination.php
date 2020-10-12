@@ -132,13 +132,15 @@ class Examination extends Admin_Controller {
         $exam_details->table('sh_exam_details');
         $exam_details->where('deleted_at IS NULL');
         $exam_details->where('session_id', $active_session_id);
-        $exam_details->columns('exam_id,class_id,batch_id,subject_group_id,subject_id');
-        $exam_details->fields('exam_id,class_id,batch_id,subject_group_id,subject_id');
-        $exam_details->relation('exam_id', 'sh_exams', 'id', 'title','','', true, '', '', '', '');
+        $exam_details->columns('exam_id,class_id,batch_id,subject_group_id,subject_id, teacher_id');
+        $exam_details->fields('exam_id,class_id,batch_id,subject_group_id,subject_id, teacher_id');
+        $exam_details->relation('exam_id', 'sh_exams', 'id', 'title',"deleted_at IS NULL AND session_id='$active_session_id'",'', true, '', '', '', '');
         $exam_details->relation('class_id', 'classes', 'id', 'class');
+        $exam_details->relation('teacher_id', 'staff', 'id', array('name', 'surname'),"employee_id!=''",'','',' ');
         $exam_details->relation('batch_id', 'sh_batches', 'section_id', 'section','','', true, '', '', 'class_id', 'class_id');
         $exam_details->relation('subject_id', 'sh_subjects_with_group', 'subject_id', 'name','','', true, '', '', 'subject_group_id', 'subject_group_id');
-        $exam_details->relation('subject_group_id', 'sh_subject_groups', 'id', 'group_name', '', '', false, '', '', 'class_id', 'class_id');
+        $exam_details->relation('subject_group_id', 'sh_subject_groups', 'id', 'group_name', "deleted_at IS NULL AND session_id='$active_session_id'", '', false, '', '', 'class_id', 'class_id');
+        $exam_details->label('teacher_id', $this->lang->line('teacher_id'));
         $exam_details->label('exam_id', $this->lang->line('assessments'));
         $exam_details->label('class_id', $this->lang->line('class'));
         $exam_details->label('batch_id', $this->lang->line('section'));
@@ -390,7 +392,7 @@ class Examination extends Admin_Controller {
     function getSubjects4rMarksheet() {
         $postdata = file_get_contents("php://input");
         $request = json_decode($postdata);
-
+        $active_session_id = count($this->common_model->dbSelect("session_id","sch_settings"," id=1 ")) > 0 ? $this->common_model->dbSelect("session_id","sch_settings"," id=1 ")[0]->session_id : null;
         $subject_group_id = $data = $this->common_model->dbSelect("id", "sh_subject_groups", " class_id='$request->class_id' AND FIND_IN_SET('$request->batch_id',batch_id) OR session_id='$request->session_id' AND deleted_at IS NULL ");
         
         if(count($subject_group_id) > 0){
@@ -407,7 +409,15 @@ class Examination extends Admin_Controller {
             if($role_id == 2){
                 $newsubjects = array();
                 $teacher_id = $this->session->userdata("admin")["id"];
-                $assigned_subjects = $this->common_model->dbSelect("*","subjects"," teacher_id='$teacher_id' ");
+                $sql = "SELECT s.id, s.name, s.code, s.type, s.is_active, s.created_at, s.updated_at, concat(st.name,' ',st.surname) as teacher_name, d.teacher_id as teacher_id FROM sh_exam_details d INNER JOIN subjects s ON d.subject_id=s.id INNER JOIN staff st ON st.id=d.teacher_id WHERE d.teacher_id='$teacher_id' AND d.session_id='$active_session_id' AND d.deleted_at IS NULL ";
+                $res = $this->common_model->dbQuery($sql);
+                
+                $assigned_subjects = array();
+                if(count($res) > 0){    
+                    foreach($res as $r){
+                        array_push($assigned_subjects, (array)$r);
+                    }
+                }
                 $subjects = $assigned_subjects;
             }
             $response = array("status"=>"error","message"=>"no data found", "data"=>$subjects);
