@@ -438,7 +438,7 @@ echo set_value('guardian_is') == "other" ? "checked" : "";
                                         <div class="col-md-3">
                                             <div class="form-group">
                                                 <label for="exampleInputEmail1"><?php echo $this->lang->line('guardian_email'); ?></label><small class="req"> *</small>
-                                                <input id="guardian_email" name="guardian_email" placeholder="" type="text" class="form-control"  value="<?php echo set_value('guardian_email'); ?>" />
+                                                <input id="guardian_email" name="guardian_email" placeholder="" type="email" class="form-control"  value="<?php echo set_value('guardian_email'); ?>" />
                                                 <span class="text-danger"><?php echo form_error('guardian_email'); ?></span>
                                             </div>
                                         </div>
