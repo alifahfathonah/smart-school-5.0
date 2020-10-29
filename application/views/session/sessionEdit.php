@@ -23,6 +23,16 @@
                                     <input autofocus="" id="session" name="session" placeholder="" type="text" class="form-control"  value="<?php echo set_value('session', $session['session']); ?>" />
                                     <span class="text-danger"><?php echo form_error('session'); ?></span>
                                 </div>
+                                <div class="form-group">
+                                    <?php $selected = explode(",",$session['terms']); ?>
+                                    <label><?php echo $this->lang->line('terms'); ?></label><small class="req"> *</small>
+                                    <select class="form-control select2-with-search" name="terms[]" multiple="multiple">
+                                        <?php if(count($terms) > 0) { foreach($terms as $term) { ?>
+                                            <option value="<?= $term->id; ?>" <?php if(in_array($term->id, $selected)){ echo "selected"; }?>><?= $term->name?></option>
+                                        <?php } } ?>
+                                    </select>
+                                    <span class="text-danger"><?php echo form_error('terms'); ?></span>
+                                </div>
                             </div>
                             <div class="box-footer">
                                 <button type="submit" class="btn btn-info pull-right"><?php echo $this->lang->line('save'); ?></button>
@@ -53,6 +63,7 @@
                                     <tr>
                                         <th><?php echo $this->lang->line('session'); ?></th>
                                         <th><?php echo $this->lang->line('status'); ?></th>
+                                        <th><?php echo $this->lang->line('terms'); ?></th>
                                         <th class="text-right"><?php echo $this->lang->line('action'); ?></th>
                                     </tr>
                                 </thead>
@@ -72,6 +83,9 @@
                                                     
                                                 }
                                                 ?></td>
+                                            <td class="mailbox-name">
+                                                <?= $session['terms_name']; ?>
+                                            </td>
                                             <td class="mailbox-date pull-right">
     <?php if ($this->rbac->hasPrivilege('session_setting', 'can_edit')) { ?>
                                                     <a href="<?php echo base_url(); ?>sessions/edit/<?php echo $session['id'] ?>" class="btn btn-default btn-xs"  data-toggle="tooltip" title="<?php echo $this->lang->line('edit'); ?>">

@@ -10,6 +10,7 @@ class Sessions extends Admin_Controller {
     }
 
     function index() {
+        $active_session_id = count($this->common_model->dbSelect("session_id","sch_settings"," id=1 ")) > 0 ? $this->common_model->dbSelect("session_id","sch_settings"," id=1 ")[0]->session_id : null;
         if (!$this->rbac->hasPrivilege('session_setting', 'can_view')) {
             access_denied();
         }
@@ -17,6 +18,9 @@ class Sessions extends Admin_Controller {
         $this->session->set_userdata('sub_menu', 'sessions/index');
         $data['title'] = 'Session List';
         $session_result = $this->session_model->getAllSession();
+        //echo "<pre/>"; print_r($session_result); die();
+        $terms = $this->common_model->dbSelect("*","sh_result_card_groups"," session_id='$active_session_id' AND deleted_at IS NULL ");
+        $data['terms'] = $terms;
         $data['sessionlist'] = $session_result;
         //echo $this->db->last_query();
         //echo "<pre/>"; print_r($data['sessionlist']); die();
@@ -47,11 +51,14 @@ class Sessions extends Admin_Controller {
     }
 
     function create() {
+        $active_session_id = count($this->common_model->dbSelect("session_id","sch_settings"," id=1 ")) > 0 ? $this->common_model->dbSelect("session_id","sch_settings"," id=1 ")[0]->session_id : null;
         if (!$this->rbac->hasPrivilege('session_setting', 'can_add')) {
             access_denied();
         }
         $session_result = $this->session_model->getAllSession();
         $data['sessionlist'] = $session_result;
+        $terms = $this->common_model->dbSelect("*","sh_result_card_groups"," session_id='$active_session_id' AND deleted_at IS NULL ");
+        $data['terms'] = $terms;
         $data['title'] = 'Add Session';
         $this->form_validation->set_rules('session', $this->lang->line('session'), 'trim|required|xss_clean');
         if ($this->form_validation->run() == FALSE) {
@@ -61,6 +68,7 @@ class Sessions extends Admin_Controller {
         } else {
             $data = array(
                 'session' => $this->input->post('session'),
+                'terms' => implode(",",$this->input->post('terms')),
             );
             $this->session_model->add($data);
             $this->session->set_flashdata('msg', '<div class="alert alert-success text-left">'.$this->lang->line('success_message').'</div>');
@@ -69,11 +77,14 @@ class Sessions extends Admin_Controller {
     }
 
     function edit($id) {
+        $active_session_id = count($this->common_model->dbSelect("session_id","sch_settings"," id=1 ")) > 0 ? $this->common_model->dbSelect("session_id","sch_settings"," id=1 ")[0]->session_id : null;
         if (!$this->rbac->hasPrivilege('session_setting', 'can_edit')) {
             access_denied();
         }
         $session_result = $this->session_model->getAllSession();
         $data['sessionlist'] = $session_result;
+        $terms = $this->common_model->dbSelect("*","sh_result_card_groups"," session_id='$active_session_id' AND deleted_at IS NULL ");
+        $data['terms'] = $terms;
         $data['title'] = 'Edit Session';
         $data['id'] = $id;
         $session = $this->session_model->get($id);
@@ -87,7 +98,9 @@ class Sessions extends Admin_Controller {
             $data = array(
                 'id' => $id,
                 'session' => $this->input->post('session'),
+                'terms' => implode(",",$this->input->post('terms'))
             );
+            
             $this->session_model->add($data);
             $this->session->set_flashdata('msg', '<div class="alert alert-success text-left">'.$this->lang->line('update_message').'</div>');
             redirect('sessions/index');

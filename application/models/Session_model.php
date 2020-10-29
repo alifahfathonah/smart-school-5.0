@@ -25,7 +25,7 @@ class Session_model extends MY_Model {
     }
 
     public function getAllSession() {
-        $sql = "SELECT sessions.*, IFNULL(sch_settings.session_id, 0) as `active` FROM `sessions` LEFT JOIN sch_settings ON sessions.id=sch_settings.session_id";
+        $sql = "SELECT sessions.*, IFNULL(sch_settings.session_id, 0) as active, GROUP_CONCAT(sh_result_card_groups.name) as terms_name FROM sessions LEFT JOIN sch_settings ON sessions.id=sch_settings.session_id LEFT JOIN sh_result_card_groups ON FIND_IN_SET(sh_result_card_groups.id, sessions.terms) > 0 GROUP BY sessions.id";
         $query = $this->db->query($sql);
         return $query->result_array();
     }
