@@ -90,11 +90,11 @@
                                     <tr>
                                         <th><?php echo $this->lang->line('subject'); ?></th>
                                         <th><?php echo $this->lang->line('subject_code'); ?></th>
-                                        <th>
-                                            <?php echo $this->lang->line('subject'); ?>
-                                            <?php echo $this->lang->line('type'); ?>
+                                        <!--<th>
+                                            <?php //echo $this->lang->line('subject'); ?>
+                                            <?php //echo $this->lang->line('type'); ?>
                                         </th>
-                                        <th><?php echo $this->lang->line('teacher_id'); ?></th>
+                                        <th><?php //echo $this->lang->line('teacher_id'); ?></th>-->
                                         <?php if($role_id != 2) { ?>
                                             <th class="text-right no-print"><?php echo $this->lang->line('action'); ?></th>
                                         <?php } ?>
@@ -108,8 +108,8 @@
                                         <tr>
                                             <td class="mailbox-name"> <?php echo $subject['name'] ?></td>
                                             <td class="mailbox-name"><?php echo $subject['code'] ?></td>
-                                            <td class="mailbox-name"><?php echo ucfirst($subject['type']) ?></td>
-                                            <td class="mailbox-name"><?php echo $subject['teacher_name'] ?></td>
+                                            <!--<td class="mailbox-name"><?php //echo ucfirst($subject['type']) ?></td>
+                                            <td class="mailbox-name"><?php //echo $subject['teacher_name'] ?></td>-->
                                             <?php if($role_id != 2) { ?>
                                                 <td class="mailbox-date pull-right no-print">
                                                     <?php
