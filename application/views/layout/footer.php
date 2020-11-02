@@ -189,10 +189,27 @@ if ($this->session->flashdata('success_msg')) {
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                         <h4 class="modal-title" id="sessionModalLabel"><?php echo $this->lang->line('session'); ?></h4>
                     </div>
-                    <div class="modal-body sessionmodal_body pb0">
+                    <div class="modal-body pb0">
+                        <div class="sessionmodal_body"></div>
+                        <!--./col-md-12-->
+                        <div class="col-md-12">
+                            <div class="form-group row">
+                                <label class="control-label col-sm-3" for="email"><?php echo $this->lang->line('session'); ?></label>
+                                <div class="col-sm-8">
+                                    <select  id="term_id2" name="term_id" class="form-control">
+                                        <option value=""><?php echo $this->lang->line('select'); ?></option>
+                                        <?php if(count($terms) > 0) { ?>
+                                            <?php foreach ($terms as $term) { ?>
+                                                <option value="<?php echo $term->id ?>" <?php if($selected_term_id == $term->id){ echo "selected"; }?>><?php echo $term->name ?></option>
+                                            <?php } ?>
+                                        <?php } ?>
+                                    </select>
+                                    <span class="text-danger"><?php echo form_error('term_id'); ?></span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
-
                         <button type="button" class="btn btn-primary submit_session" data-loading-text="<i class='fa fa-spinner fa-spin '></i> Please wait.."><?php echo $this->lang->line('save'); ?></button>
                     </div>
                 </div>
@@ -201,6 +218,45 @@ if ($this->session->flashdata('success_msg')) {
     </div>
 </div>
 
+<script>
+// select term ajax request
+function fetchTerms2(){
+    var formData = new FormData();    
+    formData.append('id', $("#session_id2").val() );
+    $.ajax({
+        url: '<?php echo site_url('schsettings/ajax_get_session_terms') ?>',
+        type: 'post',
+        data: formData,
+        contentType: false,
+        processData: false,
+        dataType: 'json',
+        cache: false,
+
+        beforeSend: function () {
+            $('#modal-upload_admin_logo').addClass('modal_loading');
+        },
+        success: function (response) {
+            if(response.length > 0){
+                var options;
+                $.each(response, function(index, value){
+                    options += "<option value='"+value.id+"'>"+value.name+"</option>";
+                });
+                $("#term_id2").html(options);
+            } else {
+                var o = new Option("Select", "");
+                $("#term_id2").html(o);
+            }
+        },
+        error: function (xhr) { // if error occured
+
+        },
+        complete: function () {
+            $('#modal-upload_admin_logo').removeClass('modal_loading');
+
+        }
+    });
+}
+</script>
 
 <?php $this->load->view('layout/routine_update'); ?>
 
