@@ -140,12 +140,13 @@
                                     <div class="col-md-12">
                                         <div class="settinghr"></div>
                                         <h4 class="session-head"><?php echo $this->lang->line('academic') . " " . $this->lang->line('session'); ?></h4>
-                                    </div><!--./col-md-12-->
+                                    </div>
+                                    <!--./col-md-12-->
                                     <div class="col-md-6">
                                         <div class="form-group row">
                                             <label class="col-sm-4"><?php echo $this->lang->line('session'); ?><small class="req"> *</small></label>
                                             <div class="col-sm-8">
-                                                <select  id="session_id" name="sch_session_id" class="form-control" >
+                                                <select  id="session_id" name="sch_session_id" class="form-control" onchange="fetchTerms(<?=$result->session_id?>)">
                                                     <option value=""><?php echo $this->lang->line('select'); ?></option>
                                                     <?php foreach ($sessionlist as $session) {
                                                         ?>
@@ -160,6 +161,22 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <!--./col-md-12-->
+                                    <div class="col-md-6">
+                                        <div class="form-group row">
+                                            <label class="col-sm-4"><?php echo $this->lang->line('terms'); ?><small class="req"> *</small></label>
+                                            <div class="col-sm-8">
+                                                <select  id="term_id" name="term_id" class="form-control">
+                                                    <option value=""><?php echo $this->lang->line('select'); ?></option>
+                                                    <?php foreach ($terms as $term) { ?>
+                                                        <option value="<?php echo $term->id ?>" <?php if($result->term_id == $term->id){ echo "selected"; }?>><?php echo $term->name ?></option>
+                                                    <?php } ?>
+                                                </select>
+                                                <span class="text-danger"><?php echo form_error('term_id'); ?></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--./col-md-12-->
                                     <div class="col-md-6">
                                         <div class="form-group row">
                                             <label class="col-sm-4"><?php echo $this->lang->line('session_start_month'); ?><small class="req"> *</small></label>
@@ -1036,7 +1053,7 @@
         });
     });
 
-// Sending AJAX request and upload file
+    // Sending AJAX request and upload file
     function uploadSmallData(formdata) {
 
         $.ajax({
@@ -1162,6 +1179,44 @@
             }
 
 
+        });
+    }
+
+    // select term ajax request
+    function fetchTerms(id){
+        var formData = new FormData();    
+        formData.append('id', $("#session_id").val() );
+        $.ajax({
+            url: '<?php echo site_url('schsettings/ajax_get_session_terms') ?>',
+            type: 'post',
+            data: formData,
+            contentType: false,
+            processData: false,
+            dataType: 'json',
+            cache: false,
+
+            beforeSend: function () {
+                $('#modal-upload_admin_logo').addClass('modal_loading');
+            },
+            success: function (response) {
+                if(response.length > 0){
+                    var options;
+                    $.each(response, function(index, value){
+                        options += "<option value='"+value.id+"'>"+value.name+"</option>";
+                    });
+                    $("#term_id").html(options);
+                } else {
+                    var o = new Option("Select", "");
+                    $("#term_id").html(o);
+                }
+            },
+            error: function (xhr) { // if error occured
+
+            },
+            complete: function () {
+                $('#modal-upload_admin_logo').removeClass('modal_loading');
+
+            }
         });
     }
 

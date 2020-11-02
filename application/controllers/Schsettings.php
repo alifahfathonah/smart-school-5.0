@@ -46,8 +46,10 @@ class Schsettings extends Admin_Controller
         $this->load->view('setting/settingList_old', $data);
         $this->load->view('layout/footer', $data);
     }
+
     public function index()
     {
+        $active_session_id = count($this->common_model->dbSelect("session_id","sch_settings"," id=1 ")) > 0 ? $this->common_model->dbSelect("session_id","sch_settings"," id=1 ")[0]->session_id : null;
         if (!$this->rbac->hasPrivilege('general_setting', 'can_view')) {
             access_denied();
         }
@@ -74,6 +76,10 @@ class Schsettings extends Admin_Controller
         $currencyPlace          = $this->customlib->getCurrencyPlace();
         $data['currencyPlace']  = $currencyPlace;
         $data['result']         = $this->setting_model->getSetting();
+        
+        $terms = $this->common_model->dbSelect("*","sh_result_card_groups"," session_id='$active_session_id' AND deleted_at IS NULL ");
+        $data['terms'] = $terms;
+        
         $this->load->view('layout/header', $data);
         $this->load->view('setting/settingList', $data);
         $this->load->view('layout/footer', $data);
@@ -248,7 +254,7 @@ class Schsettings extends Admin_Controller
         $this->form_validation->set_rules('attendence_type', $this->lang->line('attendance')." ".$this->lang->line('type'), 'trim|required|xss_clean');
         $this->form_validation->set_rules('online_admission', $this->lang->line('online') . " " . $this->lang->line('admission'), 'trim|required|xss_clean');
         $this->form_validation->set_rules('is_duplicate_fees_invoice', $this->lang->line('duplicate')." ".$this->lang->line('fees')." ".$this->lang->line('invoice'), 'trim|required|xss_clean');
-
+        $this->form_validation->set_rules('term_id', $this->lang->line('term_id'), 'trim|required|xss_clean');
         
 
         if ($this->input->post('adm_auto_insert')) {
@@ -266,7 +272,6 @@ class Schsettings extends Admin_Controller
         if ($this->form_validation->run() == false) {
             $data = array(
                 'is_student_house'          => form_error('is_student_house'),
-             
                 'sch_session_id'            => form_error('sch_session_id'),
                 'sch_name'                  => form_error('sch_name'),
                 'sch_phone'                 => form_error('sch_phone'),
@@ -332,6 +337,7 @@ class Schsettings extends Admin_Controller
                 'biometric_device'            => $this->input->post('biometric_device'),
                 'biometric'            => $this->input->post('biometric'),
                 'is_duplicate_fees_invoice' => $this->input->post('is_duplicate_fees_invoice'),
+                'term_id'                   => $this->input->post("term_id")
             );
             $data['adm_update_status']     = 1;
             $data['staffid_update_status'] = 1;
@@ -399,6 +405,12 @@ class Schsettings extends Admin_Controller
             return false;
         }
         return true;
+    }
+
+    public function ajax_get_session_terms(){
+        $session_id = $this->input->post("id");
+        $terms = $this->common_model->dbSelect("*","sh_result_card_groups"," session_id='$session_id' AND deleted_at IS NULL ");
+        echo json_encode($terms);
     }
 
 }
