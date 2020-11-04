@@ -144,12 +144,16 @@ class Examination extends Admin_Controller {
         $passing_rules->table('sh_passing_rules');
         $passing_rules->where('deleted_at IS NULL');
         $passing_rules->where('session_id', $active_session_id);
-        $passing_rules->columns('exam_id,class_id,subject_group_id,subjects_which_passed,operator,minimum_percentage');
-        $passing_rules->fields('exam_id,class_id,subject_group_id,operator,subjects_which_passed,minimum_percentage');
+        $passing_rules->columns('exam_id,session_id,term_id,class_id,subject_group_id,subjects_which_passed,operator,minimum_percentage');
+        $passing_rules->fields('exam_id,session_id,term_id,class_id,subject_group_id,operator,subjects_which_passed,minimum_percentage');
         $passing_rules->relation('exam_id', 'sh_exams', 'id', 'title');
         $passing_rules->relation('class_id', 'classes', 'id', 'class');
+        $passing_rules->relation('session_id', 'sessions', 'id', 'session','','', '', '', '', '', '');
+        $passing_rules->relation('term_id', 'sh_result_card_groups', 'id', 'name','','', '', '', '', 'session_id', 'session_id');
         $passing_rules->relation('subject_group_id', 'sh_subject_groups', 'id', 'group_name', '', '', false, '', '', 'class_id', 'class_id');
         $passing_rules->relation('subjects_which_passed', 'sh_subjects_with_group', 'subject_id', 'name','','', true, '', '', 'subject_group_id', 'subject_group_id');
+        $passing_rules->label('session_id', lang('session'));
+        $passing_rules->label('term_id', lang('term'));
         $passing_rules->label('exam_id', $this->lang->line('assessments'));
         $passing_rules->label('class_id', $this->lang->line('class'));
         $passing_rules->label('subjects_which_passed', $this->lang->line('subjects'));
@@ -163,31 +167,6 @@ class Examination extends Admin_Controller {
         $passing_rules->unset_limitlist();
         $passing_rules->unset_title();
         $passing_rules->pass_var("sh_passing_rules.session_id", $active_session_id);
-
-
-        $cum_passing_rules = xcrud_get_instance();
-        $cum_passing_rules->table('sh_cumulative_passing_rules');
-        $cum_passing_rules->where('deleted_at IS NULL');
-        $cum_passing_rules->columns('class_id,result_card_group_id,subject_group_id,subjects_which_passed,operator,minimum_percentage,remarks');
-        $cum_passing_rules->fields('class_id,result_card_group_id,subject_group_id,operator,subjects_which_passed,minimum_percentage,remarks');
-        $cum_passing_rules->relation('result_card_group_id', 'sh_result_card_groups', 'id', 'name', '', '', false, '', '', 'class_id', 'class_id');
-        $cum_passing_rules->relation('class_id', 'classes', 'id', 'class');
-        $cum_passing_rules->relation('subject_group_id', 'sh_subject_groups', 'id', 'group_name', '', '', false, '', '', 'class_id', 'class_id');
-        $cum_passing_rules->relation('subjects_which_passed', 'sh_subjects_with_group', 'subject_id', 'name','','', true, '', '', 'subject_group_id', 'subject_group_id');
-        $cum_passing_rules->label('remarks', $this->lang->line('admin_remarks'));
-        $cum_passing_rules->label('result_card_group_id', $this->lang->line('terms'));
-        $cum_passing_rules->label('class_id', $this->lang->line('class'));
-        $cum_passing_rules->label('subjects_which_passed', $this->lang->line('subjects'));
-        $cum_passing_rules->label('subject_group_id', $this->lang->line('subject_group_name'));
-        $cum_passing_rules->label('operator', $this->lang->line('operator_rule'));
-        $cum_passing_rules->label('minimum_subjects', $this->lang->line('minimum_subjects_pass'));
-        $cum_passing_rules->label('minimum_percentage', $this->lang->line('minimum_percentage'));
-        $cum_passing_rules->unset_print();
-        $cum_passing_rules->replace_remove('soft_delete');
-        $cum_passing_rules->unset_csv();
-        $cum_passing_rules->unset_limitlist();
-        $cum_passing_rules->unset_title();
-
 
         $grades = xcrud_get_instance();
         $grades->table('sh_grades');
@@ -242,7 +221,6 @@ class Examination extends Admin_Controller {
         $data["subject_groups"] = $subject_groups->render();
         $data["exam_details"] = $exam_details->render();
         $data["passing_rules"] = $passing_rules->render();
-        $data["cum_passing_rules"] = $cum_passing_rules->render();
         $data["grades"] = $grades->render();
         $data["exams_new"] = $exams->render();
         $data["active_session_id"] = $active_session_id;

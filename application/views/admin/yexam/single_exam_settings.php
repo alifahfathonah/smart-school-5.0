@@ -57,14 +57,6 @@
                             class="visible-xs"><i class="fa fa-indent"></i></span><span
                             class="hidden-xs"><?php echo $this->lang->line('assessment_passing_rules');?></span></a>
                         </li>
-                        <!--<li role="presentation" class="<?php if ($selected_tab == 'cumulative_passing_rules') { echo "active"; } ?>">
-                            <a href="#cumulative_passing_rules" class="nav-link"
-                            aria-controls="profile" role="tab"
-                            data-toggle="tab"
-                            aria-expanded="true"><span
-                            class="visible-xs"><i class="fa fa-indent"></i></span><span
-                            class="hidden-xs"><?php echo $this->lang->line('cumulative_passing_rules');?></span></a>
-                        </li>-->
                         <li role="presentation" class="<?php if ($selected_tab == 'grading') { echo "active"; } ?>">
                             <a href="#grading" class="nav-link"
                             aria-controls="profile" role="tab"
