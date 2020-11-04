@@ -110,8 +110,12 @@ class Examination extends Admin_Controller {
         $exams->where('deleted_at IS NULL');
         $exams->where('session_id', $active_session_id);
         $exams->show_primary_ai_field(false);
-        $exams->columns('title,start_date,end_date,total_marks,passing_marks');
-        $exams->fields('title,start_date,end_date,total_marks,passing_marks');
+        $exams->columns('session_id, term_id, title,start_date,end_date,total_marks,passing_marks');
+        $exams->fields('session_id, term_id, title,start_date,end_date,total_marks,passing_marks');
+        $exams->relation('session_id', 'sessions', 'id', 'session','','', '', '', '', '', '');
+        $exams->relation('term_id', 'sh_result_card_groups', 'id', 'name','','', '', '', '', 'session_id', 'session_id');
+        $exams->label('session_id', lang('session'));
+        $exams->label('term_id', lang('term'));
         $exams->label('title', $this->lang->line('assessment_name'));
         $exams->label('start_date', $this->lang->line('lbl_start_date'));
         $exams->label('end_date', $this->lang->line('lbl_end_date'));
