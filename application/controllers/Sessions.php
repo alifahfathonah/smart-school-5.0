@@ -107,6 +107,42 @@ class Sessions extends Admin_Controller {
         }
     }
 
+    function term() {
+        $active_session_id = count($this->common_model->dbSelect("session_id","sch_settings"," id=1 ")) > 0 ? $this->common_model->dbSelect("session_id","sch_settings"," id=1 ")[0]->session_id : null;
+        if (!$this->rbac->hasPrivilege('session_setting', 'can_view')) {
+            access_denied();
+        }
+        $this->session->set_userdata('top_menu', 'System Settings');
+        $this->session->set_userdata('sub_menu', 'sessions/term');
+       
+        $result_card_groups = xcrud_get_instance();
+        $result_card_groups->table('sh_result_card_groups');
+        $result_card_groups->where('deleted_at IS NULL');
+        $result_card_groups->where('session_id', $active_session_id);
+        $result_card_groups->show_primary_ai_field(false);
+        $result_card_groups->columns('name,class_id,batch_id,exam_id');
+        $result_card_groups->fields('name,class_id,batch_id,exam_id');
+        $result_card_groups->relation('class_id', 'classes', 'id', 'class');
+        $result_card_groups->relation('batch_id', 'sh_batches', 'section_id', 'section','','', '', '', '', 'class_id', 'class_id');
+        $result_card_groups->relation('exam_id', 'sh_exams', 'id', 'title', '', '', true, '', '', '', '');
+        $result_card_groups->label('class_id', lang('class'));
+        $result_card_groups->label('batch_id', lang('section'));
+        $result_card_groups->label('name', lang('name'));
+        $result_card_groups->label('exam_id', lang('assessments'));
+        $result_card_groups->replace_remove('soft_delete');
+        $result_card_groups->pass_var("sh_result_card_groups.session_id", $active_session_id);
+        $result_card_groups->table_name(lang("result_card_groups"));
+        $result_card_groups->unset_print();
+        $result_card_groups->unset_csv();
+        $result_card_groups->unset_title();
+        $result_card_groups->unset_limitlist();
+        
+        $data["result_card_groups"] = $result_card_groups->render();
+        $this->load->view('layout/header', $data);
+        $this->load->view('session/term', $data);
+        $this->load->view('layout/footer', $data);
+    }
+
 }
 
 ?>

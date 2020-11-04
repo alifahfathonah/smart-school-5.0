@@ -41,14 +41,6 @@
                             class="visible-xs"><i class="fa fa-calculator"></i></span><span
                             class="hidden-xs"><?php echo $this->lang->line('assessments'); ?></span></a>
                         </li>
-                        <li role="presentation" class="<?php if ($selected_tab == 'tab_result_card_groups') { echo "active"; } ?>">
-                            <a href="#result_card_groups" class="nav-link"
-                            aria-controls="profile" role="tab"
-                            data-toggle="tab"
-                            aria-expanded="true"><span
-                            class="visible-xs"><i class="fa fa-indent"></i></span><span
-                            class="hidden-xs"><?php echo $this->lang->line('terms');?></span></a>
-                        </li>
                         <li role="presentation" class="<?php if ($selected_tab == 'exam_details') { echo "active"; } ?>">
                             <a href="#exam_details" class="nav-link"
                             aria-controls="profile" role="tab"
@@ -98,10 +90,6 @@
 
                         <div class="tab-pane <?php if ($selected_tab === 'exams') { echo "active"; } ?>" id="exams">
                             <?php echo $exams_new; ?>
-                        </div>
-
-                        <div class="tab-pane <?php if ($selected_tab === 'tab_result_card_groups') { echo "active"; } ?>" id="result_card_groups">
-                            <?php echo $result_card_groups; ?>
                         </div>
 
                         <div class="tab-pane <?php if ($selected_tab === 'exam_details') { echo "active"; } ?>" id="exam_details">

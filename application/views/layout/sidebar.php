@@ -1220,7 +1220,8 @@
                             }
                             if ($this->rbac->hasPrivilege('session_setting', 'can_view')) {
                                 ?>
-                                <li class="<?php echo set_Submenu('sessions/index'); ?>"><a href="<?php echo base_url(); ?>sessions"><i class="fa fa-angle-double-right"></i> <?php echo $this->lang->line('session_setting'); ?></a></li>
+                                <li class="<?php echo set_Submenu('sessions/index'); ?>"><a href="<?php echo base_url(); ?>sessions"><i class="fa fa-angle-double-right"></i> <?php echo $this->lang->line('session_settings'); ?></a></li>
+                                <li class="<?php echo set_Submenu('sessions/term'); ?>"><a href="<?php echo base_url(); ?>sessions/term"><i class="fa fa-angle-double-right"></i> <?php echo $this->lang->line('term_settings'); ?></a></li>
                                 <?php
                             }
                             if ($this->rbac->hasPrivilege('notification_setting', 'can_view')) {
