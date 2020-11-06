@@ -25,7 +25,7 @@
             <div class="col-md-12"> 
                 <div class="nav-tabs-custom">
                     <ul class="nav nav-tabs" role="tablist">
-                        <li role="presentation" class="<?php if ($selected_tab == 'tab_subject_groups') { echo "active"; } else if($selected_tab == NULL || $selected_tab == "") { echo "active"; }?>">
+                        <li role="presentation" style="display:none;" class="<?php if ($selected_tab == 'tab_subject_groups') { echo "active"; } ?>">
                             <a href="#subject_groups" class="nav-link"
                             aria-controls="profile" role="tab"
                             data-toggle="tab"
@@ -33,7 +33,7 @@
                             class="visible-xs"><i class="fa fa-calculator"></i></span><span
                             class="hidden-xs"><?php echo $this->lang->line('subject_group'); ?></span></a>
                         </li>
-                        <li role="presentation" class="<?php if ($selected_tab == 'exams') { echo "active"; } ?>">
+                        <li role="presentation" class="<?php if ($selected_tab == 'exams') { echo "active"; } else if($selected_tab == NULL || $selected_tab == "") { echo "active"; } ?>">
                             <a href="#exams" class="nav-link"
                             aria-controls="profile" role="tab"
                             data-toggle="tab"
@@ -76,11 +76,11 @@
                     </ul>
                     
                     <div class="tab-content" style="padding-top: 15px;">
-                        <div class="tab-pane <?php if ($selected_tab === 'tab_subject_groups') { echo 'active'; }else if($selected_tab == NULL || $selected_tab == '') { echo 'active'; } ?>" id="subject_groups">
+                        <div class="tab-pane <?php if ($selected_tab === 'tab_subject_groups') { echo 'active'; }?>" style="display:none;" id="subject_groups">
                             <?php echo $subject_groups; ?>
                         </div>
 
-                        <div class="tab-pane <?php if ($selected_tab === 'exams') { echo "active"; } ?>" id="exams">
+                        <div class="tab-pane <?php if ($selected_tab === 'exams') { echo "active"; } else if($selected_tab == NULL || $selected_tab == '') { echo 'active'; } ?>" id="exams">
                             <?php echo $exams_new; ?>
                         </div>
 
