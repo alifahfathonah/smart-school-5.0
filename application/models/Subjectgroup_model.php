@@ -202,9 +202,8 @@ class Subjectgroup_model extends MY_Model {
 
             $section_group_array[] = $sections_array;
         }
-        $this->db->insert_batch('subject_group_class_sections', $section_group_array);
-		
-			
+        $this->db->insert_batch('subject_group_class_sections', $section_group_array);	
+        return true;
     }
 
     public function getDetailbyClassSection($class_id, $section_id) {
@@ -291,7 +290,7 @@ class Subjectgroup_model extends MY_Model {
 
 
     public function check_section_exists($str) {
-         $sections = $this->input->post('sections');
+        $sections = $this->input->post('sections');
         $id = $this->input->post('id');
         if (!isset($id)) {
             $id = 0;

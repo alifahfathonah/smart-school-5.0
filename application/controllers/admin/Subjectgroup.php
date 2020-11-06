@@ -27,28 +27,23 @@ class Subjectgroup extends Admin_Controller
         $data['classlist']     = $class;
         $data['section_array'] = $json_array;
 
-        $this->form_validation->set_rules(
+        $res = $this->form_validation->set_rules(
             'name', $this->lang->line('name'), array(
                 'required',
                 array('class_exists', array($this->subjectgroup_model, 'class_exists')),
             )
         );
-
+        
         $this->form_validation->set_rules('class_id', $this->lang->line('class'), 'trim|required|xss_clean');
-
         $this->form_validation->set_rules('subject[]', $this->lang->line('subject'), 'trim|required|xss_clean');
-
-
-
-      $this->form_validation->set_rules(
-                'sections[]', $this->lang->line('section'), array(
-            'required',
-            array('check_section_exists', array($this->subjectgroup_model, 'check_section_exists'))
-                )
+        $this->form_validation->set_rules(
+            'sections[]', $this->lang->line('section'), array(
+                'required',
+                array('check_section_exists', array($this->subjectgroup_model, 'check_section_exists'))
+            )
         );
-
-
-        if ($this->form_validation->run() == false) {
+        
+        if (!$this->form_validation->run()) {
             $data['section_array'] = $this->input->post('sections');
         } else {
             $name        = $this->input->post('name');
@@ -60,8 +55,20 @@ class Subjectgroup extends Admin_Controller
             );
             $subject  = $this->input->post('subject');
             $sections = $this->input->post('sections');
-
-            $this->subjectgroup_model->add($class_array, $subject, $sections);
+            
+            $res = $this->subjectgroup_model->add($class_array, $subject, $sections);
+            if($res){
+                foreach($sections as $sect) {
+                    $exam_subject_groups_data = array(
+                        "class_id" => $this->input->post("class_id"),
+                        "batch_id" => $sect,
+                        "group_name" => $name,
+                        "subjects" => implode(",", $subject),
+                        "session_id" => $session
+                    );
+                    $this->common_model->dbInsert("sh_subject_groups",$exam_subject_groups_data);
+                }
+            }
             $this->session->set_flashdata('msg', '<div class="alert alert-success text-left">' . $this->lang->line('success_message') . '</div>');
             redirect('admin/subjectgroup');
         }
@@ -139,7 +146,7 @@ class Subjectgroup extends Admin_Controller
 
         $this->form_validation->set_rules('class_id', $this->lang->line('class'), 'trim|required|xss_clean');
         
-   $this->form_validation->set_rules(
+        $this->form_validation->set_rules(
                 'sections[]', $this->lang->line('section'), array(
             'required',
             array('check_section_exists', array($this->subjectgroup_model, 'check_section_exists'))
@@ -148,7 +155,7 @@ class Subjectgroup extends Admin_Controller
 
         $this->form_validation->set_rules('subject[]', $this->lang->line('subject'), 'trim|required|xss_clean');
 
-        if ($this->form_validation->run() == false) {
+        if (!$this->form_validation->run()) {
             if($this->input->server('REQUEST_METHOD') == "POST"){
             $data['section_array'] = $this->input->post('sections');
             }
@@ -157,7 +164,7 @@ class Subjectgroup extends Admin_Controller
             $this->load->view('admin/subjectgroup/subjectgroupEdit', $data);
             $this->load->view('layout/footer', $data);
         } else {
-
+            $session     = $this->setting_model->getCurrentSession();
             $class_array = array(
                 'id'        => $this->input->post('id'),
                 'name'        => $this->input->post('name'),                
@@ -165,11 +172,25 @@ class Subjectgroup extends Admin_Controller
             );
             $subject  = $this->input->post('subject');
             $sections = $this->input->post('sections');
-$delete_sections = array_diff($old_sections, $sections);
-$add_sections = array_diff($sections, $old_sections);
-$delete_subjects = array_diff($old_subjects, $subject);
-$add_subjects = array_diff($subject, $old_subjects);
-$this->subjectgroup_model->edit($class_array,$delete_sections, $add_sections, $delete_subjects, $add_subjects);
+            $delete_sections = array_diff($old_sections, $sections);
+            $add_sections = array_diff($sections, $old_sections);
+            $delete_subjects = array_diff($old_subjects, $subject);
+            $add_subjects = array_diff($subject, $old_subjects);
+            $this->subjectgroup_model->edit($class_array,$delete_sections, $add_sections, $delete_subjects, $add_subjects);
+            foreach($sections as $sect) {
+                $exam_subject_groups_data = array(
+                    "class_id" => $this->input->post("class_id"),
+                    "batch_id" => $sect,
+                    "group_name" => $this->input->post("name"),
+                    "subjects" => implode(",", $subject)
+                );
+                $where = array(
+                    "class_id" => $this->input->post("class_id"),
+                    "batch_id" => $sect,
+                    "session_id" => $session
+                );
+                $this->common_model->update_where("sh_subject_groups",$where,$exam_subject_groups_data);
+            }
             redirect('admin/subjectgroup');
         }
     }
