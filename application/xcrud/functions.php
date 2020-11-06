@@ -217,16 +217,16 @@ function check_evaluation_update($postdata, $primary, $xcrud) {
             $xcrud->set_exception('classes', $type.' evaluation type already exist for '.$class.'.');
             break;
         }
-    }
-    
-
-    
+    }   
 }
 
 function checkValidation($postdata, $xcrud) {
-
     $from = $postdata->get('percent_from');
     $to = $postdata->get('percent_upto');
+    if(empty($postdata->get('class_id')) || $postdata->get('class_id') == ""){
+        $xcrud->set_exception('class_id', lang('grade_validation'));
+    }
+
     if ($from >= 0 && $from <= 100) {
 
     } else {
@@ -254,6 +254,22 @@ function checkValidationUpdate($postdata, $primary, $xcrud) {
 
     } else {
         $xcrud->set_exception('percent_upto', lang('grade_validation'));
+    }
+}
+
+function insertGrades($postdata, $xcrud){
+    $db = Xcrud_db::get_instance();
+    $name = $postdata->get("name");
+    $classes = explode(',',$postdata->get("class_id"));
+    $percent_from = $postdata->get("percent_from");
+    $percent_upto = $postdata->get("percent_upto");
+    $description = $postdata->get("description");
+    $color = $postdata->get("color");
+    $session_id = $postdata->get("session_id");
+    
+    for($i=0; $i<count($classes); $i++){
+        $sql = "REPLACE INTO sh_grades (name,class_id,percent_from,percent_upto,description,color,session_id) VALUES ('$name', $classes[$i], $percent_from, $percent_upto, '$description', '$color', $session_id)";
+        $db->query($sql);
     }
 }
 

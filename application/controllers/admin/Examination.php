@@ -173,7 +173,7 @@ class Examination extends Admin_Controller {
         $grades->where('deleted_at IS NULL');
         $grades->where('session_id', $active_session_id);
         $grades->show_primary_ai_field(false);
-        $grades->relation('class_id', 'classes', 'id', 'class');
+        $grades->relation('class_id', 'classes', 'id', 'class','','', true, '', '', '', '');
         $grades->columns('name,class_id,percent_from, percent_upto, color');
         $grades->fields('name,class_id, percent_from, percent_upto, color');
         $grades->change_type('color','text','#000000', array('id'=>"colorpicker"));
@@ -186,6 +186,7 @@ class Examination extends Admin_Controller {
         $grades->table_name(lang('lbl_grades'));
         $grades->before_insert('checkValidation');
         $grades->before_update('checkValidationUpdate');
+        $grades->replace_insert('insertGrades');
         $grades->unset_print();
         $grades->unset_csv();
         $grades->unset_title();
