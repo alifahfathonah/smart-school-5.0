@@ -55,10 +55,11 @@ class Subjectgroup extends Admin_Controller
             );
             $subject  = $this->input->post('subject');
             $sections = $this->input->post('sections');
+            $teachers = $this->input->post("teachers");
             
-            $res = $this->subjectgroup_model->add($class_array, $subject, $sections);
+            $res = $this->subjectgroup_model->add($class_array, $subject, $sections, $teachers);
             if($res){
-                foreach($sections as $sect) {
+                foreach($sections as $ke=>$sect) {
                     $exam_subject_groups_data = array(
                         "class_id" => $this->input->post("class_id"),
                         "batch_id" => $sect,
@@ -76,6 +77,7 @@ class Subjectgroup extends Admin_Controller
         $data['subjectlist']      = $subject_list;
         $subjectgroupList         = $this->subjectgroup_model->getByID();
         $data['subjectgroupList'] = $subjectgroupList;
+        $data["teachers"] = $this->common_model->dbSelect("*","staff"," employee_id != '' ");
         $this->load->view('layout/header', $data);
         $this->load->view('admin/subjectgroup/subjectgroupList', $data);
         $this->load->view('layout/footer', $data);

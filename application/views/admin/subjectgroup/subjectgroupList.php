@@ -62,30 +62,24 @@
                                         <?php echo $this->lang->line('no')." ".$this->lang->line('section')?>
                                     </div>
 
- <span class="text-danger"><?php echo form_error('sections[]'); ?></span>
+                                    <span class="text-danger"><?php echo form_error('sections[]'); ?></span>
                                 </div>
                                 <div class="form-group">
                                     <label for="exampleInputEmail1"><?php echo $this->lang->line('subject')?></label><small class="req"> *</small>
-
-
-                                    <?php
-                                    foreach ($subjectlist as $subject) {
-                                        ?>
-                                        <div class="checkbox">
+                                    <?php foreach ($subjectlist as $subject) { ?>
+                                        <div class="checkbox form-inline">
                                             <label>
                                                 <input type="checkbox" name="subject[]" value="<?php echo $subject['id'] ?>" <?php echo set_checkbox('subject[]', $subject['id']); ?> ><?php echo $subject['name'] ?>
-
-
-                                                
                                             </label>
+                                            <select class="form-control" name="teachers[]">
+                                                <?php foreach($teachers as $thr) { ?>
+                                                    <option value="<?= $thr->id; ?>"><?= $thr->name." ".$thr->surname; ?></option>
+                                                <?php } ?>
+                                            </select>
                                         </div>
-                                        <?php
-                                    }
-                                    ?>
-
+                                    <?php } ?>
                                     <span class="text-danger"><?php echo form_error('subject[]'); ?></span>
                                 </div>
-
                                 <div class="form-group">
                                     <label for="exampleInputEmail1"><?php echo $this->lang->line('description'); ?></label>
                                     <textarea class="form-control" id="description" name="description" placeholder="" rows="3" placeholder="Enter ..."><?php echo set_value('description'); ?></textarea>

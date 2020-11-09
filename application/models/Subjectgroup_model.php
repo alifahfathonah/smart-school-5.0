@@ -129,7 +129,7 @@ class Subjectgroup_model extends MY_Model {
         }
     }
 
-    public function add($data, $subject_group, $section_group) {
+    public function add($data, $subject_group, $section_group, $teacher_group) {
         $this->db->trans_start(); # Starting Transaction
         $this->db->trans_strict(false); # See Note 01. If you wish can remove as well
         //=======================Code Start===========================
@@ -185,6 +185,7 @@ class Subjectgroup_model extends MY_Model {
                 'subject_group_id' => $subject_group_id,
                 'subject_id' => $sub_group_value,
                 'session_id' => $this->setting_model->getCurrentSession(),
+                'teacher_id' => $teacher_group[$sub_group_key]
             );
 
             $subject_group_subject_Array[] = $vehicle_array;

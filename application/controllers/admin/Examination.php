@@ -114,14 +114,16 @@ class Examination extends Admin_Controller {
         $exam_details->table('sh_exam_details');
         $exam_details->where('deleted_at IS NULL');
         $exam_details->where('session_id', $active_session_id);
-        $exam_details->columns('exam_id,class_id,batch_id,subject_group_id,subject_id, teacher_id');
-        $exam_details->fields('exam_id,class_id,batch_id,subject_group_id,subject_id, teacher_id');
+        $exam_details->columns('session_id,term_id,exam_id,class_id,batch_id,subject_group_id,subject_id,teacher_id');
+        $exam_details->fields('session_id,term_id,exam_id,class_id,batch_id,subject_group_id,subject_id,teacher_id');
         $exam_details->relation('exam_id', 'sh_exams', 'id', 'title',"deleted_at IS NULL AND session_id='$active_session_id'",'', true, '', '', '', '');
         $exam_details->relation('class_id', 'classes', 'id', 'class');
         $exam_details->relation('teacher_id', 'staff', 'id', array('name', 'surname'),"employee_id!=''",'','',' ');
         $exam_details->relation('batch_id', 'sh_batches', 'section_id', 'section','','', true, '', '', 'class_id', 'class_id');
         $exam_details->relation('subject_id', 'sh_subjects_with_group', 'subject_id', 'name','','', true, '', '', 'subject_group_id', 'subject_group_id');
         $exam_details->relation('subject_group_id', 'sh_subject_groups', 'id', 'group_name', "deleted_at IS NULL AND session_id='$active_session_id'", '', false, '', '', 'class_id', 'class_id');
+        $exam_details->relation('session_id', 'sessions', 'id', 'session','','', '', '', '', '', '');
+        $exam_details->relation('term_id', 'sh_result_card_groups', 'id', 'name','','', '', '', '', 'session_id', 'session_id');
         $exam_details->label('teacher_id', $this->lang->line('teacher_id'));
         $exam_details->label('exam_id', $this->lang->line('assessments'));
         $exam_details->label('class_id', $this->lang->line('class'));
@@ -130,6 +132,8 @@ class Examination extends Admin_Controller {
         $exam_details->label('total_marks', $this->lang->line('total_marks'));
         $exam_details->label('passing_marks', $this->lang->line('passing_marks'));
         $exam_details->label('subject_group_id', $this->lang->line('subject_group'));
+        $exam_details->label('session_id', lang('session'));
+        $exam_details->label('term_id', lang('term'));
         $exam_details->unset_print();
         $exam_details->replace_remove('soft_delete');
         $exam_details->replace_insert('custom_exam_details');
