@@ -469,10 +469,7 @@ function dashboard2() {
 		if($getTotalStaff > 0){$percentTotalStaff_data = ($Staffattendence * 100)/($getTotalStaff);}else { $percentTotalStaff_data = '0' ;}
         $active_session_id = count($this->common_model->dbSelect("session_id","sch_settings"," id=1 ")) > 0 ? $this->common_model->dbSelect("session_id","sch_settings"," id=1 ")[0]->session_id : null;
         $terms = $this->common_model->dbSelect("*","sh_result_card_groups"," session_id='$active_session_id' AND deleted_at IS NULL ");
-        $data['terms'] = $terms;
         
-        $data["selected_term_id"] = $this->common_model->dbSelect("term_id","sch_settings"," 1 ")[0]->term_id;
-
         //	echo "<pre>";print_r($data);echo "<pre>";die;
 		$data['percentTotalStaff_data'] = $percentTotalStaff_data ; 
         $this->load->view('layout/header', $data);

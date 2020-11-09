@@ -200,7 +200,7 @@ if ($this->session->flashdata('success_msg')) {
                                         <option value=""><?php echo $this->lang->line('select'); ?></option>
                                         <?php if(count($terms) > 0) { ?>
                                             <?php foreach ($terms as $term) { ?>
-                                                <option value="<?php echo $term->id ?>" <?php if($selected_term_id == $term->id){ echo "selected"; }?>><?php echo $term->name ?></option>
+                                                <option value="<?php echo $term->id ?>" <?php if($this->session->userdata("admin")["selected_term_id"] == $term->id){ echo "selected"; }?>><?php echo $term->name ?></option>
                                             <?php } ?>
                                         <?php } ?>
                                     </select>

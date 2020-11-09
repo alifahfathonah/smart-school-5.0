@@ -99,6 +99,12 @@ class Site extends Public_Controller {
                         $requisition_count = 0;
                     }
 
+                    $selected_term_id = 0;
+                    $record = $this->common_model->dbSelect("term_id","sch_settings"," 1 ");
+                    if(count($record) > 0){
+                        $selected_term_id = $record[0]->term_id;
+                    }
+
                     $session_data = array(
                         'id' => $result->id,
                         'username' => $logusername,
@@ -117,7 +123,8 @@ class Site extends Public_Controller {
                         'address' => $setting_result[0]['address'],
                         'phone' => $setting_result[0]['phone'],
                         'requisition_count' => $requisition_count,
-                        'department' => $result->department
+                        'department' => $result->department,
+                        'selected_term_id' => $selected_term_id
                     );
                     $this->session->set_userdata('admin', $session_data);
                     $role = $this->customlib->getStaffRole();
