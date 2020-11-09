@@ -197,12 +197,12 @@ if ($this->session->flashdata('success_msg')) {
                                 <label class="control-label col-sm-3" for="email"><?php echo $this->lang->line('session'); ?></label>
                                 <div class="col-sm-8">
                                     <select  id="term_id2" name="term_id" class="form-control">
-                                        <option value=""><?php echo $this->lang->line('select'); ?></option>
-                                        <?php if(count($terms) > 0) { ?>
-                                            <?php foreach ($terms as $term) { ?>
-                                                <option value="<?php echo $term->id ?>" <?php if($this->session->userdata("admin")["selected_term_id"] == $term->id){ echo "selected"; }?>><?php echo $term->name ?></option>
-                                            <?php } ?>
-                                        <?php } ?>
+                                        <!--<option value=""><?php //echo $this->lang->line('select'); ?></option>
+                                        <?php //if(count($terms) > 0) { ?>
+                                            <?php //foreach ($terms as $term) { ?>
+                                                <option value="<?php //echo $term->id ?>" <?php //if($this->session->userdata("admin")["selected_term_id"] == $term->id){ echo "selected"; }?>><?php echo $term->name ?></option>
+                                            <?php //} ?>
+                                        <?php //} ?>-->
                                     </select>
                                     <span class="text-danger"><?php echo form_error('term_id'); ?></span>
                                 </div>
@@ -239,7 +239,11 @@ function fetchTerms2(){
             if(response.length > 0){
                 var options;
                 $.each(response, function(index, value){
-                    options += "<option value='"+value.id+"'>"+value.name+"</option>";
+                    var selected="";
+                    if(value.id == <?php echo $this->session->userdata("admin")["selected_term_id"] ?>){
+                        selected = "selected";
+                    }
+                    options += "<option value='"+value.id+"' "+selected+">"+value.name+"</option>";
                 });
                 $("#term_id2").html(options);
             } else {
@@ -256,6 +260,7 @@ function fetchTerms2(){
         }
     });
 }
+fetchTerms2();
 </script>
 
 <?php $this->load->view('layout/routine_update'); ?>
