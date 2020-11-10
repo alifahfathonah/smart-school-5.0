@@ -119,6 +119,7 @@
                                         <th><?php echo $this->lang->line('name'); ?></th>
                                         <th><?php echo $this->lang->line('class') . " " . $this->lang->line('section'); ?></th>
                                         <th><?php echo $this->lang->line('subject'); ?></th>
+                                        <th><?php echo $this->lang->line('teacher'); ?></th>
                                         <th class="text-right"><?php echo $this->lang->line('action'); ?></th>
                                     </tr>
                                 </thead>
@@ -158,6 +159,13 @@
                                                 foreach ($subjectgroup->group_subject as $group_subject_key => $group_subject_value) {
                                                     echo "<div>" . $group_subject_value->name . "</div>";
                                                 }
+                                                ?>
+                                            </td>
+                                            <td>
+                                                <?php
+                                                    foreach ($subjectgroup->group_subject as $value) {
+                                                        echo "<div>" . $value->teacher_name . "</div>";
+                                                    }
                                                 ?>
                                             </td>
                                             <td class="mailbox-date pull-right">

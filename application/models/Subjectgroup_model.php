@@ -249,7 +249,7 @@ class Subjectgroup_model extends MY_Model {
 
     public function getGroupsubjects($subject_group_id) {
 
-        $sql = "SELECT subject_group_subjects.*,subjects.name,subjects.code,subjects.type FROM `subject_group_subjects` INNER JOIN subjects on subjects.id=subject_group_subjects.subject_id WHERE subject_group_id =" . $this->db->escape($subject_group_id) . " and session_id =" . $this->db->escape($this->current_session);
+        $sql = "SELECT subject_group_subjects.*,subjects.name,subjects.code,subjects.type, (CASE WHEN subject_group_subjects.teacher_id <> 0 THEN concat(staff.name,' ', staff.surname) ELSE '' END) as teacher_name FROM `subject_group_subjects` INNER JOIN subjects on subjects.id=subject_group_subjects.subject_id LEFT JOIN staff ON subject_group_subjects.teacher_id=staff.id WHERE subject_group_id =" . $this->db->escape($subject_group_id) . " and session_id =" . $this->db->escape($this->current_session);
         $query = $this->db->query($sql);
         return $query->result();
     }
