@@ -65,7 +65,7 @@ class Subjectgroup_model extends MY_Model {
         }
     }
 
-    public function edit($data, $delete_sections, $add_sections, $delete_subjects, $add_subjects) {
+    public function edit($data, $delete_sections, $add_sections, $delete_subjects, $add_subjects, $delete_teachers, $add_teachers) {
         $this->db->trans_begin();
         if (isset($data['id'])) {
             $this->db->where('id', $data['id']);
@@ -76,31 +76,30 @@ class Subjectgroup_model extends MY_Model {
         if (!empty($add_sections)) {
             $section_group_array = array();
             foreach ($add_sections as $section_group_key => $section_group_value) {
-
                 $sections_array = array(
                     'subject_group_id' => $subject_group_id,
                     'class_section_id' => $section_group_value,
                     'session_id' => $this->setting_model->getCurrentSession(),
                 );
-
                 $section_group_array[] = $sections_array;
             }
             $this->db->insert_batch('subject_group_class_sections', $section_group_array);
         }
-        if (!empty($add_subjects)) {
+        
+        if (!empty($add_subjects) && !empty($add_teachers)) {
             $subject_group_subject_Array = array();
             foreach ($add_subjects as $sub_group_key => $sub_group_value) {
-
                 $vehicle_array = array(
                     'subject_group_id' => $subject_group_id,
                     'subject_id' => $sub_group_value,
                     'session_id' => $this->setting_model->getCurrentSession(),
+                    'teacher_id' => $add_teachers[$sub_group_key]
                 );
-
                 $subject_group_subject_Array[] = $vehicle_array;
             }
             $this->db->insert_batch('subject_group_subjects', $subject_group_subject_Array);
         }
+        
         if (!empty($delete_sections)) {
             $this->db->where('subject_group_id', $data['id']);
             $this->db->where_in('class_section_id', $delete_sections);
@@ -109,6 +108,11 @@ class Subjectgroup_model extends MY_Model {
         if (!empty($delete_subjects)) {
             $this->db->where('subject_group_id', $data['id']);
             $this->db->where_in('subject_id', $delete_subjects);
+            $this->db->delete('subject_group_subjects');
+        }
+        if (!empty($delete_teachers)) {
+            $this->db->where('subject_group_id', $data['id']);
+            $this->db->where_in('subject_id', $delete_teachers);
             $this->db->delete('subject_group_subjects');
         }
 
@@ -248,19 +252,18 @@ class Subjectgroup_model extends MY_Model {
     }
 
     public function getGroupsubjects($subject_group_id) {
-
         $sql = "SELECT subject_group_subjects.*,subjects.name,subjects.code,subjects.type, (CASE WHEN subject_group_subjects.teacher_id <> 0 THEN concat(staff.name,' ', staff.surname) ELSE '' END) as teacher_name FROM `subject_group_subjects` INNER JOIN subjects on subjects.id=subject_group_subjects.subject_id LEFT JOIN staff ON subject_group_subjects.teacher_id=staff.id WHERE subject_group_id =" . $this->db->escape($subject_group_id) . " and session_id =" . $this->db->escape($this->current_session);
         $query = $this->db->query($sql);
         return $query->result();
     }
 
     public function remove($id) {
-		$this->db->trans_start(); # Starting Transaction
+        $this->db->trans_start(); # Starting Transaction
         $this->db->trans_strict(false); # See Note 01. If you wish can remove as well
         //=======================Code Start===========================
         $this->db->where('id', $id);       
         $this->db->delete('subject_groups');
-		$message      = DELETE_RECORD_CONSTANT." On subject groups id ".$id;
+        $message      = DELETE_RECORD_CONSTANT." On subject groups id ".$id;
         $action       = "Delete";
         $record_id    = $id;
         $this->log($message, $record_id, $action);

@@ -72,6 +72,7 @@
                                                 <input type="checkbox" name="subject[]" value="<?php echo $subject['id'] ?>" <?php echo set_checkbox('subject[]', $subject['id']); ?> ><?php echo $subject['name'] ?>
                                             </label>
                                             <select class="form-control" name="teachers[]">
+                                                <option value="">--Select a teacher--</option>
                                                 <?php foreach($teachers as $thr) { ?>
                                                     <option value="<?= $thr->id; ?>"><?= $thr->name." ".$thr->surname; ?></option>
                                                 <?php } ?>

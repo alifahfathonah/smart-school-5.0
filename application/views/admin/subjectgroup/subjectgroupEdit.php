@@ -73,14 +73,17 @@
                                     <?php
                                     foreach ($subjectlist as $subject) {
                                         ?>
-                                        <div class="checkbox">
+                                        <div class="checkbox form-inline">
                                             <label>
-                                                <?php
-                                               
-                                                ?>
                                                 <input type="checkbox" name="subject[]" value="<?php echo $subject['id'] ?>" <?php echo set_checkbox('subject[]', $subject['id'], getSelectedSubjects($subjectgroup, $subject['id']) ? TRUE : FALSE); ?>
                                                        ><?php echo $subject['name'] ?>
                                             </label>
+                                            <select class="form-control" name="teachers[]">
+                                                <option value="">--Select a teacher--</option>
+                                                <?php foreach($teachers as $thr) { ?>
+                                                    <option value="<?= $thr->id; ?>" <?php if($subject['teacher_id'] == $thr->id) { echo "selected"; } ?>><?= $thr->name." ".$thr->surname; ?></option>
+                                                <?php } ?>
+                                            </select>
                                         </div>
                                         <?php
                                     }
@@ -128,6 +131,7 @@
                                         <th><?php echo $this->lang->line('name'); ?></th>
                                         <th><?php echo $this->lang->line('class') . " " . $this->lang->line('section'); ?></th>
                                         <th><?php echo $this->lang->line('subject'); ?></th>
+                                        <th><?php echo $this->lang->line('teacher'); ?></th>
                                         <th class="text-right"><?php echo $this->lang->line('action'); ?></th>
                                     </tr>
                                 </thead>
@@ -167,6 +171,13 @@
                                                 foreach ($subjectgroup->group_subject as $group_subject_key => $group_subject_value) {
                                                     echo "<div>" . $group_subject_value->name . "</div>";
                                                 }
+                                                ?>
+                                            </td>
+                                            <td>
+                                                <?php
+                                                    foreach ($subjectgroup->group_subject as $value) {
+                                                        echo "<div>" . $value->teacher_name . "</div>";
+                                                    }
                                                 ?>
                                             </td>
                                             <td class="mailbox-date pull-right">

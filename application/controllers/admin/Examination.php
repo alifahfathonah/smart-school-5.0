@@ -121,7 +121,7 @@ class Examination extends Admin_Controller {
         $exam_details->relation('teacher_id', 'staff', 'id', array('name', 'surname'),"employee_id!=''",'','',' ');
         $exam_details->relation('batch_id', 'sh_batches', 'section_id', 'section','','', true, '', '', 'class_id', 'class_id');
         $exam_details->relation('subject_id', 'sh_subjects_with_group', 'subject_id', 'name','','', true, '', '', 'subject_group_id', 'subject_group_id');
-        $exam_details->relation('subject_group_id', 'sh_subject_groups', 'id', 'group_name', "deleted_at IS NULL AND session_id='$active_session_id'", '', false, '', '', 'class_id', 'class_id');
+        $exam_details->relation('subject_group_id', 'sh_subject_groups', 'id', 'group_name', "session_id='$active_session_id'", '', false, '', '', 'class_id', 'class_id');
         $exam_details->relation('session_id', 'sessions', 'id', 'session','','', '', '', '', '', '');
         $exam_details->relation('term_id', 'sh_result_card_groups', 'id', 'name','','', '', '', '', 'session_id', 'session_id');
         $exam_details->label('teacher_id', $this->lang->line('teacher_id'));
@@ -200,7 +200,6 @@ class Examination extends Admin_Controller {
 
         $subject_groups = xcrud_get_instance();
         $subject_groups->table('sh_subject_groups');
-        $subject_groups->where('deleted_at IS NULL');
         $subject_groups->where('session_id', $active_session_id);
         $subject_groups->show_primary_ai_field(false);
         $subject_groups->columns('group_name,class_id,batch_id,subjects');
@@ -356,14 +355,13 @@ class Examination extends Admin_Controller {
     function getSubjects4rMarksheet() {
         $postdata = file_get_contents("php://input");
         $request = json_decode($postdata);
-        $active_session_id = count($this->common_model->dbSelect("session_id","sch_settings"," id=1 ")) > 0 ? $this->common_model->dbSelect("session_id","sch_settings"," id=1 ")[0]->session_id : null;
-        $subject_group_id = $data = $this->common_model->dbSelect("id", "sh_subject_groups", " class_id='$request->class_id' AND FIND_IN_SET('$request->batch_id',batch_id) OR session_id='$request->session_id' AND deleted_at IS NULL ");
-        
+        $active_session_id =  $this->setting_model->getCurrentSession();
+        $subject_group_id = $data = $this->common_model->dbSelect("id", "sh_subject_groups", " class_id='$request->class_id' AND FIND_IN_SET('$request->batch_id',batch_id) OR session_id='$request->session_id' ");
         if(count($subject_group_id) > 0){
             $subject_group_id = $subject_group_id[0]->id;
-            $sql = "SELECT s.* FROM sh_subjects_with_group sg INNER JOIN subjects s ON sg.subject_id=s.id WHERE subject_group_id='$subject_group_id'";
+            $sql = "SELECT distinct s.* FROM sh_subjects_with_group sg INNER JOIN subjects s ON sg.subject_id=s.id WHERE subject_group_id='$subject_group_id'";
             $subjects = $this->common_model->dbQuery($sql);
-
+            
             $role_id=0;
             foreach($this->session->userdata("admin") as $key=>$d){
                 if($d == 2){
@@ -647,7 +645,7 @@ class Examination extends Admin_Controller {
             $students = $this->common_model->dbQuery($sql);
 
             $subjects = array();
-            $subject_group_id = $this->common_model->dbSelect("id","sh_subject_groups"," class_id='$request->class_id' AND FIND_IN_SET('$request->batch_id', batch_id) OR session_id='$active_academic_year' AND deleted_at IS NULL ");
+            $subject_group_id = $this->common_model->dbSelect("id","sh_subject_groups"," class_id='$request->class_id' AND FIND_IN_SET('$request->batch_id', batch_id) OR session_id='$active_academic_year' ");
             if(count($subject_group_id) > 0){
                 $subject_group_id = $subject_group_id[0]->id;
                 $sql = "SELECT s.* FROM sh_subjects_with_group sg INNER JOIN subjects s ON sg.subject_id=s.id WHERE subject_group_id='$subject_group_id'";
@@ -806,7 +804,7 @@ class Examination extends Admin_Controller {
 
             //-------- handle subjects groups -------//
             $subject_group = array();
-            $subjectgroup = $this->common_model->dbSelect("subjects","sh_subject_groups"," class_id='$request->class_id' AND FIND_IN_SET('$request->batch_id',batch_id) AND session_id='$active_academic_year' AND deleted_at IS NULL ");
+            $subjectgroup = $this->common_model->dbSelect("subjects","sh_subject_groups"," class_id='$request->class_id' AND FIND_IN_SET('$request->batch_id',batch_id) AND session_id='$active_academic_year' ");
             if(count($subjectgroup) > 0){
                 $subjectgroup = $subjectgroup[0]->subjects;
                 $subject_group = explode(",", $subjectgroup);
@@ -1134,7 +1132,7 @@ class Examination extends Admin_Controller {
         $students = $this->common_model->dbQuery($sql);
         
         $subjects = array();
-        $subject_group_id = $this->common_model->dbSelect("id","sh_subject_groups"," class_id='$request->class_id' AND FIND_IN_SET('$request->batch_id', batch_id) OR session_id='$active_academic_year' AND deleted_at IS NULL ");
+        $subject_group_id = $this->common_model->dbSelect("id","sh_subject_groups"," class_id='$request->class_id' AND FIND_IN_SET('$request->batch_id', batch_id) OR session_id='$active_academic_year' ");
         if(count($subject_group_id) > 0){
             $subject_group_id = $subject_group_id[0]->id;
             $sql = "SELECT s.* FROM sh_subjects_with_group sg INNER JOIN subjects s ON sg.subject_id=s.id WHERE subject_group_id='$subject_group_id'";
@@ -1263,7 +1261,7 @@ class Examination extends Admin_Controller {
 
         //-------- handle subjects groups -------//
         $subject_group = array();
-        $subjectgroup = $this->common_model->dbSelect("subjects","sh_subject_groups"," class_id='$request->class_id' AND FIND_IN_SET('$request->batch_id',batch_id) OR session_id='$active_academic_year' AND deleted_at IS NULL ");
+        $subjectgroup = $this->common_model->dbSelect("subjects","sh_subject_groups"," class_id='$request->class_id' AND FIND_IN_SET('$request->batch_id',batch_id) OR session_id='$active_academic_year' ");
         if(count($subjectgroup) > 0){
             $subjectgroup = $subjectgroup[0]->subjects;
             $subject_group = explode(",", $subjectgroup);
@@ -1823,7 +1821,7 @@ class Examination extends Admin_Controller {
             }
             $exam_detail_ids = rtrim($exam_detail_ids,",");
             
-            $std_reading_subjects_obj = $this->common_model->dbSelect("subjects","sh_subject_groups"," class_id='$class_id' AND FIND_IN_SET('$batch_id',batch_id) AND deleted_at IS NULL OR session_id='$session_id' ");
+            $std_reading_subjects_obj = $this->common_model->dbSelect("subjects","sh_subject_groups"," class_id='$class_id' AND FIND_IN_SET('$batch_id',batch_id) OR session_id='$session_id' ");
             $std_reading_subjects = 0;
             if(count($std_reading_subjects_obj) > 0){
                 $std_reading_subjects = $std_reading_subjects_obj[0]->subjects;
@@ -2078,7 +2076,7 @@ class Examination extends Admin_Controller {
             // copy subject groups
             if(count($subject_groups) > 0){
                 foreach($subject_groups as $sg){
-                    $where = " class_id='$sg->class_id' AND batch_id='$sg->batch_id' AND group_name='$sg->group_name' AND subjects='$sg->subjects' AND session_id='$to' AND deleted_at IS NULL ";
+                    $where = " class_id='$sg->class_id' AND batch_id='$sg->batch_id' AND group_name='$sg->group_name' AND subjects='$sg->subjects' AND session_id='$to' ";
                     $exists = $this->common_model->dbSelect("*","sh_subject_groups"," $where ");
                     if(count($exists) == 0){
                         $sg->id = '';

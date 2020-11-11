@@ -59,16 +59,8 @@ class Subjectgroup extends Admin_Controller
             
             $res = $this->subjectgroup_model->add($class_array, $subject, $sections, $teachers);
             if($res){
-                foreach($sections as $ke=>$sect) {
-                    $exam_subject_groups_data = array(
-                        "class_id" => $this->input->post("class_id"),
-                        "batch_id" => $sect,
-                        "group_name" => $name,
-                        "subjects" => implode(",", $subject),
-                        "session_id" => $session
-                    );
-                    $this->common_model->dbInsert("sh_subject_groups",$exam_subject_groups_data);
-                }
+                $class_id = $this->input->post("class_id");
+                $this->insertExamDetails($class_id, $subject, $sections);
             }
             $this->session->set_flashdata('msg', '<div class="alert alert-success text-left">' . $this->lang->line('success_message') . '</div>');
             redirect('admin/subjectgroup');
@@ -81,6 +73,53 @@ class Subjectgroup extends Admin_Controller
         $this->load->view('layout/header', $data);
         $this->load->view('admin/subjectgroup/subjectgroupList', $data);
         $this->load->view('layout/footer', $data);
+    }
+
+    function insertExamDetails($class_id, $subjects, $sections){
+        $session_id     = $this->setting_model->getCurrentSession();
+        $exams = $this->common_model->dbSelect("*","sh_exams"," session_id='$session_id' ");
+        $exam_details_data = array();
+        
+        if(count($exams) > 0){
+            $this->db->where("class_id", $class_id);
+            $this->db->where("session_id", $session_id);
+            $this->db->delete("sh_exam_details");
+            foreach($exams as $ex){
+                foreach($sections as $section) {
+                    $subject_group_id = $this->common_model->dbSelect("subject_group_id","subject_group_class_sections"," class_section_id='$section' ");
+                    if(count($subject_group_id) > 0){
+                        $subject_group_id = $subject_group_id[0]->subject_group_id;
+                    } else {
+                        $subject_group_id = 0;
+                    }
+                    $section_id = $this->common_model->dbSelect("section_id","class_sections"," id= $section ");
+                    if(count($section_id) > 0){
+                        $section_id = $section_id[0]->section_id;
+                    } else {
+                        $section_id = 0;
+                    }
+                    foreach($subjects as $sub){
+                        $exam_details = array(
+                            "exam_id" => $ex->id,
+                            "class_id" => $class_id,
+                            "batch_id" => $section_id,
+                            "subject_id" => $sub,
+                            "exam_date" => date("Y-m-d"),
+                            "start_time" => date("h:i:s"),
+                            "end_time" => date("h:i:s"),
+                            "total_marks" => 100,
+                            "passing_marks" => 40,
+                            "session_id" => $session_id,
+                            "term_id" => $ex->term_id,
+                            "subject_group_id" => $subject_group_id,
+                        );
+                        $exam_details_data[] = $exam_details;
+                    }
+                }
+            }
+        }
+        
+        $this->db->insert_batch("sh_exam_details",$exam_details_data);
     }
 
     public function delete($id)
@@ -104,6 +143,7 @@ class Subjectgroup extends Admin_Controller
         $json_array               = array();
         $old_sections               = array();
         $old_subjects               = array();
+        $old_teachers               = array();
         $data['title']            = 'Edit Class';
         $data['id']               = $id;
         $class                    = $this->class_model->get();
@@ -114,30 +154,24 @@ class Subjectgroup extends Admin_Controller
         $subjectgroupList         = $this->subjectgroup_model->getByID();
         $data['class_id']         = 0;
         $data['subjectgroupList'] = $subjectgroupList;
+        $data["teachers"] = $this->common_model->dbSelect("*","staff"," employee_id != '' ");
         $subjectgroup             = $this->subjectgroup_model->getByID($id);
 
-     
         if (!empty($subjectgroup[0]->sections)) {
-
             $data['class_id'] = $subjectgroup[0]->sections[0]->class_id;
             foreach ($subjectgroup[0]->sections as $key => $value) {
-              
                 $old_sections[] = ($value->class_section_id);
                 $json_array[] = ($value->class_section_id);
             }
         }
-           if (!empty($subjectgroup[0]->group_subject)) {
-
-            
+        if (!empty($subjectgroup[0]->group_subject)) {
             foreach ($subjectgroup[0]->group_subject as $key => $value) {
-              
-                $old_subjects[] = $value->subject_id;
-                
+                $old_subjects[] = $value->subject_id; 
+                $old_teachers[] = $value->teacher_id;
             }
-        }
+        }    
       
         $data['section_array'] = $json_array;
-    
         $data['subjectgroup'] = $subjectgroup;
         $this->form_validation->set_rules(
             'name', $this->lang->line('name'), array(
@@ -159,9 +193,16 @@ class Subjectgroup extends Admin_Controller
 
         if (!$this->form_validation->run()) {
             if($this->input->server('REQUEST_METHOD') == "POST"){
-            $data['section_array'] = $this->input->post('sections');
+                $data['section_array'] = $this->input->post('sections');
             }
-           
+
+            foreach($subjectgroupList[0]->group_subject  as $g){
+                foreach($data["subjectlist"] as $key=>$sub){
+                    if($sub["id"] == $g->subject_id){
+                        $data["subjectlist"][$key]["teacher_id"] = $g->teacher_id;
+                    }
+                }
+            }
             $this->load->view('layout/header', $data);
             $this->load->view('admin/subjectgroup/subjectgroupEdit', $data);
             $this->load->view('layout/footer', $data);
@@ -174,25 +215,21 @@ class Subjectgroup extends Admin_Controller
             );
             $subject  = $this->input->post('subject');
             $sections = $this->input->post('sections');
+            $inputteachers = $this->input->post("teachers");
+            $teachers = array();
+            foreach($inputteachers as $t){
+                if(!empty($t)){
+                    array_push($teachers,$t);
+                }
+            }
             $delete_sections = array_diff($old_sections, $sections);
             $add_sections = array_diff($sections, $old_sections);
             $delete_subjects = array_diff($old_subjects, $subject);
             $add_subjects = array_diff($subject, $old_subjects);
-            $this->subjectgroup_model->edit($class_array,$delete_sections, $add_sections, $delete_subjects, $add_subjects);
-            foreach($sections as $sect) {
-                $exam_subject_groups_data = array(
-                    "class_id" => $this->input->post("class_id"),
-                    "batch_id" => $sect,
-                    "group_name" => $this->input->post("name"),
-                    "subjects" => implode(",", $subject)
-                );
-                $where = array(
-                    "class_id" => $this->input->post("class_id"),
-                    "batch_id" => $sect,
-                    "session_id" => $session
-                );
-                $this->common_model->update_where("sh_subject_groups",$where,$exam_subject_groups_data);
-            }
+            $delete_teachers = array_diff($old_teachers, $teachers);
+            $add_teachers = array_diff($teachers, $old_teachers);
+            $this->subjectgroup_model->edit($class_array,$delete_sections, $add_sections, $delete_subjects, $add_subjects, $delete_teachers, $add_teachers);
+            $this->insertExamDetails($this->input->post("class_id"), $subject, $sections);
             redirect('admin/subjectgroup');
         }
     }

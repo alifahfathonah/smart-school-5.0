@@ -173,6 +173,12 @@ public function getSqlMode(){
         return $session_result[0]['session_id'];
     }
 
+    public function getCurrentTerm() {
+        $session_result = $this->get();
+
+        return $session_result[0]['term_id'];
+    }
+
      public function getOnlineAdmissionStatus() {
         $setting_result = $this->get();
 
