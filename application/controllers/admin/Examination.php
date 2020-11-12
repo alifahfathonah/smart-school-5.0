@@ -373,9 +373,6 @@ class Examination extends Admin_Controller {
                 $teacher_id = $this->session->userdata("admin")["id"];
                 $sql = "SELECT s.* FROM subject_group_subjects sg INNER JOIN subject_group_class_sections cs ON sg.subject_group_id=cs.subject_group_id INNER JOIN class_sections cc ON cs.class_section_id=cc.id INNER JOIN subjects s ON sg.subject_id=s.id WHERE sg.teacher_id='$teacher_id' AND cc.class_id='$request->class_id' AND cc.section_id='$request->batch_id' ";
                 $res = $this->common_model->dbQuery($sql);
-                //print_r($res); die();
-                //$sql = "SELECT s.id, s.name, s.code, s.type, s.is_active, s.created_at, s.updated_at, concat(st.name,' ',st.surname) as teacher_name, d.teacher_id as teacher_id FROM sh_exam_details d INNER JOIN subjects s ON d.subject_id=s.id INNER JOIN staff st ON st.id=d.teacher_id WHERE d.teacher_id='$teacher_id' AND d.session_id='$active_session_id' AND d.deleted_at IS NULL ";
-                //$res = $this->common_model->dbQuery($sql);
                 
                 $assigned_subjects = array();
                 if(count($res) > 0){    
