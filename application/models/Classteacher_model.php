@@ -73,10 +73,10 @@ class Classteacher_model extends MY_Model {
 
     function classbysubjectteacher($id, $classes) {
       // $query = $this->db->select("classes.*,teacher_subjects.subject_id")->join("class_sections", "class_sections.id = teacher_subjects.class_section_id")->join("classes", "class_sections.class_id = classes.id ")->where("teacher_subjects.teacher_id", $id)->where_not_in("class_sections.class_id", $classes)->group_by("class_sections.class_id")->get("teacher_subjects");
-
+       $classes = implode(",",$classes);
       $query = $this->db->query('SELECT class,id,
-        (SELECT TS.subject_id FROM teacher_subjects TS WHERE TS.teacher_id = $id) subject_id,
-         (SELECT distinct CS.class_id FROM class_sections CS  WHERE C.ID = CS.class_id and CS.class_id not in $classes) section
+        (SELECT TS.subject_id FROM teacher_subjects TS WHERE TS.teacher_id = "$id") subject_id,
+         (SELECT distinct CS.class_id FROM class_sections CS  WHERE C.ID = CS.class_id and CS.class_id not in ('.$classes.')) section
           FROM CLASSES C where 1=1'); 
            // $query =  $this->db->select("classes.*,teacher_subjects.subject_id")
            //          ->join("classes", "class_sections.class_id = classes.id ")
