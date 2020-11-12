@@ -481,7 +481,7 @@ function render_complete_resultcard_single_tags($data, $html){
     $tags["result_graph"] = "<img id='profile-img' src='".base_url(). "uploads/chart/".$data2->student_id.".jpeg' alt='".base_url()."uploads/student_images/no_image.png' style='width: 250px; float:right;'/>";
 
     $result_analysis = "<table class='result_analysis_table' border='1px' style='border: 1px solid; width: 100%;'><tr style='background: black; color: white;'><td class='text-center' colspan='2'><b>RESULT ANALYSIS</b></td></tr>";
-    $result_analysis .= "<tr><td class='text-left' style='padding-left: 5px;'>CLASS CUMULATIVE POSITION</td><td>PENDING</td></tr>";
+    $result_analysis .= "<tr><td class='text-left' style='padding-left: 5px;'>CLASS CUMULATIVE POSITION</td><td>".class_cumulative_position($data2->class_id)."</td></tr>";
     $result_analysis .= "<tr><td class='text-left' style='padding-left: 5px;'>CLASS TERM POSITION</td><td>PENDING</td></tr>";
     $result_analysis .= "<tr><td class='text-left' style='padding-left: 5px;'>CLASS ARM POSITION</td><td>PENDING</td></tr>";
     $result_analysis .= "<tr><td class='text-left' style='padding-left: 5px;'>TOTAL TERM SCORE</td><td>PENDING</td></tr>";
@@ -550,6 +550,34 @@ function render_complete_resultcard_single_tags($data, $html){
         $rendered_html = str_replace("{" . $key . "}", $tags[$key], $rendered_html);
     }
     return $rendered_html;
+}
+
+function class_cumulative_position($class_id){
+    $ci = & get_instance();
+    $session_id = $ci->setting_model->getCurrentSession();
+    $sql = "SELECT s.id FROM  student_session ss LEFT JOIN students s ON ss.student_id=s.id  WHERE 
+            ss.class_id='$class_id' 
+            AND ss.section_id IN (SELECT GROUP_CONCAT(section_id) FROM class_sections WHERE class_id='$class_id') 
+            AND ss.session_id='$session_id' ";
+    $students = $ci->common_model->dbQuery($sql);
+
+    $termWiseObtainMarksSQL = "SELECT sh_result_card_groups.id, sh_marksheets.student_id, SUM(sh_marksheets.obtained_marks) AS obtain_term_marks FROM 
+	    sh_result_card_groups LEFT JOIN sh_marksheets ON sh_marksheets.exam_id IN (sh_result_card_groups.exam_id) WHERE sh_result_card_groups.class_id='$class_id' 
+	    AND sh_result_card_groups.batch_id IN (SELECT GROUP_CONCAT(section_id) FROM class_sections WHERE class_id='$class_id') 
+	    AND sh_result_card_groups.session_id='$session_id' GROUP BY sh_result_card_groups.id, sh_marksheets.student_id";
+    
+    $records = $ci->common_model->dbQuery($termWiseObtainMarksSQL);
+    
+    foreach($students as $s){
+        $s->total_marks = 0;
+        foreach($records as $r){
+            if($r->student_id == $s->id){
+                $s->total_marks += $r->obtain_term_marks;
+            }
+        }
+    }
+    arsort($students);
+    //return $students;
 }
 
 function system_result_card_template_english(){

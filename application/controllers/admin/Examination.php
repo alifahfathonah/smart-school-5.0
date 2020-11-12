@@ -1901,8 +1901,7 @@ class Examination extends Admin_Controller {
             $selected_language_id = 2;
         }
 
-        $template_obj = $this->common_model->dbSelect("*","sh_templates","tag='multi-exam-result-card' AND is_default='Yes' AND deleted_at IS NULL AND class_id='$request->class_id' AND ".$language_where);
-            
+        $template_obj = $this->common_model->dbSelect("*","sh_templates","tag='multi-exam-result-card' AND is_default='Yes' AND deleted_at IS NULL AND class_id='$request->class_id' AND ".$language_where); 
         if(count($template_obj) > 0){
             $data["template"] = $template_obj[0];
         } else {
