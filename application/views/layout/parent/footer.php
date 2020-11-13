@@ -7,6 +7,7 @@
 <script>
     $.widget.bridge('uibutton', $.ui.button);
 </script>
+
 <link href="<?php echo base_url(); ?>backend/toast-alert/toastr.css" rel="stylesheet"/>
 <script src="<?php echo base_url(); ?>backend/toast-alert/toastr.js"></script>
 

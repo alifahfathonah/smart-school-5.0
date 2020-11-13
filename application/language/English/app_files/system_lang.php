@@ -1453,3 +1453,6 @@ $lang['history'] = 'History';
 $lang['requisition_history'] = 'Requisition History';
 $lang['teacher_id'] = 'Teacher';
 $lang['term'] = 'Term';
+$lang['results'] = 'Results';
+$lang['result'] = 'Result';
+$lang['select_a_child'] = 'Select a child';

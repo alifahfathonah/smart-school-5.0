@@ -427,6 +427,7 @@ if ($this->parentmodule_lib->hasActive('hostel_rooms')) {
                             <li class="<?php echo set_Submenu('parents/store'); ?>"><a href="<?php echo base_url(); ?>parent/parents/store"><i class="fa fa-cart-plus"></i> <span><?php echo $this->lang->line('school_store'); ?></span></a></li>
 
                             <li class="<?php echo set_Submenu('parents/orders'); ?>"><a href="<?php echo base_url(); ?>parent/parents/orders"><i class="fa fa-shopping-cart"></i> <span><?php echo $this->lang->line('Orders'); ?></span></a></li>
+                            <li class="<?php echo set_Submenu('parents/results'); ?>"><a href="<?php echo base_url(); ?>parent/parents/results"><i class="fa fa-map-o ftlayer"></i> <span><?php echo $this->lang->line('results'); ?></span></a></li>
 <?php } ?>
                     </ul>
                 </section>              
