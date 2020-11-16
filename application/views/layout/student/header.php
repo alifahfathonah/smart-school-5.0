@@ -347,7 +347,7 @@ if($this->studentmodule_lib->hasActive('multi_class')){
                         if ($this->studentmodule_lib->hasActive('hostel_rooms')) {
                             ?>
                             <li class="<?php echo set_Submenu('hostelroom/index'); ?>"><a href="<?php echo base_url(); ?>user/hostelroom"><i class="fa fa-building-o ftlayer"></i> <span><?php echo $this->lang->line('hostel_rooms'); ?></span></a></li>
-
+                            <li class="<?php echo set_Submenu('user/results'); ?>"><a href="<?php echo base_url(); ?>user/user/results"><i class="fa fa-map-o ftlayer"></i> <span><?php echo $this->lang->line('results'); ?></span></a></li>
                         <?php }
                         ?>
 
