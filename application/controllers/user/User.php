@@ -283,7 +283,7 @@ class User extends Student_Controller
         }*/
         $session_id = $this->setting_model->getCurrentSession();
         $data['sessions'] = $this->common_model->dbSelect("*","sessions"," id='$session_id' ");
-        $data['exams'] = $this->common_model->dbSelect("*","sh_exams"," deleted_at IS NULL AND session_id=$session_id ");
+        $data['exams'] = $this->common_model->dbSelect("*","sh_exams"," deleted_at IS NULL AND session_id=$session_id AND is_locked=0 ");
         $data['student_list'] = $array_childs;
         $this->load->view('layout/student/header', $data);
         $this->load->view('student/results', $data);

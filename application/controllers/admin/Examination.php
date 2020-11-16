@@ -88,8 +88,8 @@ class Examination extends Admin_Controller {
         $exams->where('deleted_at IS NULL');
         $exams->where('session_id', $active_session_id);
         $exams->show_primary_ai_field(false);
-        $exams->columns('session_id, term_id, title,start_date,end_date,total_marks,passing_marks');
-        $exams->fields('session_id, term_id, title,start_date,end_date,total_marks,passing_marks');
+        $exams->columns('session_id, term_id, title,start_date,end_date,total_marks,passing_marks,is_locked');
+        $exams->fields('session_id, term_id, title,start_date,end_date,total_marks,passing_marks,is_locked');
         $exams->relation('session_id', 'sessions', 'id', 'session','','', '', '', '', '', '');
         $exams->relation('term_id', 'sh_result_card_groups', 'id', 'name','','', '', '', '', 'session_id', 'session_id');
         $exams->label('session_id', lang('session'));
