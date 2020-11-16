@@ -63,11 +63,11 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
             </div>
         </div>
         
-        <div class="row">
+        <div class="row" id="resultant-container" style="display: none;">
             <div class="col-md-12">     
                 <div class="box box-primary">
                     <div class="box-body box-profile">
-                        <div id="result-container">ASDF</div>
+                        <div id="result-container"></div>
                     </div>
                 </div>
             </div>
@@ -85,6 +85,10 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                 url: "<?php echo base_url(); ?>parent/parents/getStudentResult",
                 data: formData,
                 dataType: "html",
+                beforeSend: function(){
+                    $("#resultant-container").css({"display":"block"});
+                    $("#result-container").html("<p class='text-center'>Loading...</p>");
+                },
                 success: function (data) { 
                     $("#result-container").html(data);
                 }
