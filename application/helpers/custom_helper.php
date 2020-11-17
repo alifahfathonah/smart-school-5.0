@@ -481,7 +481,7 @@ function render_complete_resultcard_single_tags($data, $html){
     $tags["result_graph"] = "<img id='profile-img' src='".base_url(). "uploads/chart/".$data2->student_id.".jpeg' alt='".base_url()."uploads/student_images/no_image.png' style='width: 250px; float:right;'/>";
 
     $result_analysis = "<table class='result_analysis_table' border='1px' style='border: 1px solid; width: 100%;'><tr style='background: black; color: white;'><td class='text-center' colspan='2'><b>RESULT ANALYSIS</b></td></tr>";
-    $result_analysis .= "<tr><td class='text-left' style='padding-left: 5px;'>CLASS CUMULATIVE POSITION</td><td>".class_cumulative_position($data2->class_id)."</td></tr>";
+    $result_analysis .= "<tr><td class='text-left' style='padding-left: 5px;'>CLASS CUMULATIVE POSITION</td><td>".class_cumulative_position($data2->class_id, $data2->student_id)."</td></tr>";
     $result_analysis .= "<tr><td class='text-left' style='padding-left: 5px;'>CLASS TERM POSITION</td><td>PENDING</td></tr>";
     $result_analysis .= "<tr><td class='text-left' style='padding-left: 5px;'>CLASS ARM POSITION</td><td>PENDING</td></tr>";
     $result_analysis .= "<tr><td class='text-left' style='padding-left: 5px;'>TOTAL TERM SCORE</td><td>PENDING</td></tr>";
@@ -552,7 +552,7 @@ function render_complete_resultcard_single_tags($data, $html){
     return $rendered_html;
 }
 
-function class_cumulative_position($class_id){
+function class_cumulative_position($class_id, $student_id){
     $ci = & get_instance();
     $session_id = $ci->setting_model->getCurrentSession();
     $sql = "SELECT s.id FROM  student_session ss LEFT JOIN students s ON ss.student_id=s.id  WHERE 
@@ -577,7 +577,35 @@ function class_cumulative_position($class_id){
         }
     }
     arsort($students);
+    $position = "";
+    $count = 0;
+    foreach($students as $key=>$s){
+        $count++;
+        if($s->id == $student_id){
+            $position = $count;
+            break;
+        }
+    }
+    return position_string($position);
     //return $students;
+}
+
+function position_string($i) {
+    if (empty($i) || is_null($i)) {
+        return "";
+    }
+    $j = $i % 10;
+    $k = $i % 100;
+    if ($j == 1 && $k != 11) {
+        return $i . "st";
+    }
+    if ($j == 2 && $k != 12) {
+        return $i . "nd";
+    }
+    if ($j == 3 && $k != 13) {
+        return $i . "rd";
+    }
+    return $i . "th";
 }
 
 function system_result_card_template_english(){
