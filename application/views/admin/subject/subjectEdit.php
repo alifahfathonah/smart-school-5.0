@@ -35,32 +35,10 @@
                                     <input autofocus="" id="category" name="name" placeholder="" type="text" class="form-control"  value="<?php echo set_value('name', $subject['name']); ?>" />
                                     <span class="text-danger"><?php echo form_error('name'); ?></span>
                                 </div>
-                                <?php
-                                foreach ($subject_types as $subject_type_key => $subject_type_value) {
-                                    ?>
-
-                                    <label class="radio-inline">
-                                        <input type="radio" value="<?php echo $subject_type_key ?>" name="type" <?php echo set_radio('type', $subject_type_key, (set_value('type', $subject['type']) == $subject_type_key) ? TRUE : FALSE ); ?> ><?php echo $subject_type_value; ?> 
-                                    </label>
-                                    <?php
-                                }
-                                ?>
-
                                 <div class="form-group"><br>
                                     <label for="exampleInputEmail1"><?php echo $this->lang->line('subject_code'); ?></label>
                                     <input id="category" name="code" placeholder="" type="text" class="form-control"  value="<?php echo set_value('code', $subject['code']); ?>" />
                                     <span class="text-danger"><?php echo form_error('code'); ?></span>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="exampleInputEmail1"><?php echo $this->lang->line('teachers'); ?></label> <small class="req"> *</small>
-                                    <select id="teacher_id" name="teacher_id" class="form-control">
-                                        <option value="">--Select a teacher--</option>
-                                        <?php foreach($teacherlist as $thr) { ?>
-                                            <option value="<?= $thr['id']; ?>" <?php if($subject['teacher_id'] == $thr['id']){ echo "selected"; }?>><?= $thr['name'] ." ". $thr['surname']; ?></option>
-                                        <?php } ?>
-                                    </select>
-                                    <span class="text-danger"><?php echo form_error('teacher_id'); ?></span>
                                 </div>
 
                             </div>

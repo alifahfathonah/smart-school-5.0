@@ -62,8 +62,6 @@ class Subject extends Admin_Controller {
         //echo "<pre/>"; print_r($data[""]); die();
         
         $this->form_validation->set_rules('name', $this->lang->line('subject_name'), 'trim|required|xss_clean|callback__check_name_exists');
-        $this->form_validation->set_rules('type', $this->lang->line('type'), 'trim|required|xss_clean');
-        $this->form_validation->set_rules('teacher_id', $this->lang->line('teacher_id'), 'required|xss_clean');
         if ($this->input->post('code')) {
             $this->form_validation->set_rules('code', $this->lang->line('code'), 'trim|required|callback__check_code_exists');
         }
@@ -74,9 +72,7 @@ class Subject extends Admin_Controller {
         } else {
             $data = array(
                 'name' => $this->input->post('name'),
-                'code' => $this->input->post('code'),
-                'type' => $this->input->post('type'),
-                'teacher_id' => $this->input->post('teacher_id')
+                'code' => $this->input->post('code')
             );
             $this->subject_model->add($data);
             $this->session->set_flashdata('msg', '<div class="alert alert-success text-left">'.$this->lang->line('success_message').'</div>');
@@ -139,22 +135,7 @@ class Subject extends Admin_Controller {
         $data['subject'] = $subject;
         $data['subject_types']=$this->customlib->subjectType();
         $this->form_validation->set_rules('name', $this->lang->line('subject'), 'trim|required|xss_clean');
-        $this->form_validation->set_rules('teacher_id', $this->lang->line('teacher_id'), 'required|xss_clean');
         if ($this->form_validation->run() == FALSE) {
-            $assignteacherlist = $this->class_model->getClassTeacher();
-            $data['assignteacherlist'] = $assignteacherlist;
-            foreach ($assignteacherlist as $key => $value) {
-                $class_id = $value["class_id"];
-                $section_id = $value["section_id"];
-                $tlist[] = $this->classteacher_model->teacherByClassSection($class_id, $section_id);
-            }
-            if(!empty($tlist)){
-                $data["tlist"] = $tlist;
-            }
-            $teacherlist = $this->staff_model->getStaffbyrole($role = 2);
-            $data['teacherlist'] = $teacherlist;
-            //echo "<pre/>"; print_r($data["teacherlist"]); die();
-
             $this->load->view('layout/header', $data);
             $this->load->view('admin/subject/subjectEdit', $data);
             $this->load->view('layout/footer', $data);
@@ -163,8 +144,6 @@ class Subject extends Admin_Controller {
                 'id' => $id,
                 'name' => $this->input->post('name'),
                 'code' => $this->input->post('code'),
-                'type' => $this->input->post('type'),
-                'teacher_id' => $this->input->post('teacher_id'),
             );
             $this->subject_model->add($data);
             $this->session->set_flashdata('msg', '<div class="alert alert-success text-left">'.$this->lang->line('success_message').'</div>');
