@@ -114,8 +114,8 @@ class Examination extends Admin_Controller {
         $exam_details->table('sh_exam_details');
         $exam_details->where('deleted_at IS NULL');
         $exam_details->where('session_id', $active_session_id);
-        $exam_details->columns('session_id,term_id,exam_id,class_id,batch_id,subject_group_id,subject_id,teacher_id');
-        $exam_details->fields('session_id,term_id,exam_id,class_id,batch_id,subject_group_id,subject_id,teacher_id');
+        $exam_details->columns('session_id,term_id,exam_id,class_id,batch_id,subject_group_id,subject_id');
+        $exam_details->fields('session_id,term_id,exam_id,class_id,batch_id,subject_group_id,subject_id');
         $exam_details->relation('exam_id', 'sh_exams', 'id', 'title',"deleted_at IS NULL AND session_id='$active_session_id'",'', true, '', '', '', '');
         $exam_details->relation('class_id', 'classes', 'id', 'class');
         $exam_details->relation('teacher_id', 'staff', 'id', array('name', 'surname'),"employee_id!=''",'','',' ');
