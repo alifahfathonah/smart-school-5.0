@@ -284,7 +284,7 @@ function getSelectedSubjects($subjectgroup, $find) {
             var div_data = "";
             $.ajax({
                 type: "GET",
-                url: base_url + "sections/getByClass",
+                url: <?php echo base_url() ?> + "sections/getByClass",
                 data: {'class_id': class_id},
                 dataType: "json",
                 beforeSend: function () {
