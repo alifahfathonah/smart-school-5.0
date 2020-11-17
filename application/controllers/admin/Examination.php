@@ -148,8 +148,8 @@ class Examination extends Admin_Controller {
         $passing_rules->table('sh_passing_rules');
         $passing_rules->where('deleted_at IS NULL');
         $passing_rules->where('session_id', $active_session_id);
-        $passing_rules->columns('exam_id,session_id,term_id,class_id,subject_group_id,subjects_which_passed,operator,minimum_percentage');
-        $passing_rules->fields('exam_id,session_id,term_id,class_id,subject_group_id,operator,subjects_which_passed,minimum_percentage');
+        $passing_rules->columns('session_id,term_id,exam_id,class_id,subject_group_id,subjects_which_passed,operator,minimum_percentage');
+        $passing_rules->fields('session_id,term_id,exam_id,class_id,subject_group_id,operator,subjects_which_passed,minimum_percentage');
         $passing_rules->relation('exam_id', 'sh_exams', 'id', 'title');
         $passing_rules->relation('class_id', 'classes', 'id', 'class');
         $passing_rules->relation('session_id', 'sessions', 'id', 'session','','', '', '', '', '', '');
