@@ -740,6 +740,12 @@ class Examination extends Admin_Controller {
                 }
                 $std->subjects = $temp;
             }
+            
+            if(count($exam_detail_ids) > 0){
+                $exam_detail_ids = implode(',', $exam_detail_ids);
+            } else {
+                $exam_detail_ids = 0;
+            }
 
             $sql4 = "SELECT "
             . "sh_marksheets.*,"
@@ -751,7 +757,7 @@ class Examination extends Admin_Controller {
             . "LEFT JOIN sh_remarks_and_positions ON sh_marksheets.student_id=sh_remarks_and_positions.student_id AND sh_marksheets.exam_id=sh_remarks_and_positions.exam_id "
             . "LEFT JOIN sh_administrator_remarks ON sh_marksheets.student_id=sh_administrator_remarks.student_id "
             . "WHERE sh_marksheets.exam_detail_id "
-            . "IN (" . implode(',', $exam_detail_ids) . ") "
+            . "IN (" . $exam_detail_ids . ") "
             . "AND sh_marksheets.deleted_at IS NULL "
             . "AND sh_administrator_remarks.deleted_at IS NULL "
             . "AND sh_remarks_and_positions.deleted_at IS NULL";
@@ -1105,8 +1111,15 @@ class Examination extends Admin_Controller {
             foreach($oData->subjects as $oSub){
                 $oData->exam_obtained_total += $oSub->obtained_total;
             }
-            $oData->exam_obtained_percentage = ($oData->exam_obtained_total * 100) / $terms_data_new["exam_total_marks"];
-            $oData->exam_obtained_percentage = number_format((float)$oData->exam_obtained_percentage, 2, '.', '');
+            
+            if($terms_data_new["exam_total_marks"] > 0) {
+                $oData->exam_obtained_percentage = ($oData->exam_obtained_total * 100) / $terms_data_new["exam_total_marks"];
+                $oData->exam_obtained_percentage = number_format((float)$oData->exam_obtained_percentage, 2, '.', '');
+            } else {
+                $oData->exam_obtained_percentage = 0;
+                $oData->exam_obtained_percentage = number_format((float)$oData->exam_obtained_percentage, 2, '.', '');
+            }
+            
         }
         //------------------Exam Obtain Total Marks----------------//        
 
