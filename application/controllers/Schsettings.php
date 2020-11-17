@@ -408,10 +408,18 @@ class Schsettings extends Admin_Controller
     }
 
     public function ajax_get_session_terms(){
-        $active_session_id = count($this->common_model->dbSelect("session_id","sch_settings"," id=1 ")) > 0 ? $this->common_model->dbSelect("session_id","sch_settings"," id=1 ")[0]->session_id : null;
+        $active_session_id = $this->setting_model->getCurrentSession();
         $session_id = $this->input->post("id") == 'undefined' ? $active_session_id: $this->input->post("id");
-        $terms = $this->common_model->dbSelect("*","sh_result_card_groups"," session_id='$session_id' AND deleted_at IS NULL ");
-        echo json_encode($terms);
+        $terms = $this->common_model->dbSelect("terms","sessions"," id='$session_id' ");
+        if(count($terms) > 0){
+            if(!empty($terms[0]->terms) && $terms[0]->terms != null) {
+                $terms = $terms[0]->terms;
+            } else {
+                $terms = -1;
+            }
+        } 
+        $data = $this->common_model->dbSelect("*","sh_result_card_groups"," id IN ($terms) AND deleted_at IS NULL ");
+        echo json_encode($data);
     }
 
 }
