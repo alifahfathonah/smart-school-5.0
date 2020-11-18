@@ -129,6 +129,11 @@ class Subjectgroup extends Admin_Controller
         }
         $data['title'] = 'Fees Master List';
         $this->subjectgroup_model->remove($id);
+        $session_id = $this->setting_model->getCurrentSession();
+        // delete exam detele from sh_exam_details table
+        $this->db->where("subject_group_id", $id);
+        $this->db->where("session_id", $session_id);
+        $this->db->delete("sh_exam_details");
         redirect('admin/subjectgroup');
     }
 
