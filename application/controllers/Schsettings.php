@@ -370,6 +370,9 @@ class Schsettings extends Admin_Controller
             $this->session->userdata['admin']['theme']           = $this->input->post('theme');
             $this->session->userdata['admin']['currency_place']  = $this->input->post('currency_place');
             set_language($this->input->post('sch_lang_id'));
+            $oldData = $this->session->userdata("admin");
+            $oldData["selected_term_id"] = $this->input->post("term_id");
+            $this->session->set_userdata("admin", $oldData);
             $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('success_message'));
             echo json_encode($array);
         }

@@ -515,6 +515,9 @@ function dashboard2() {
         $session = $this->session_model->get($session);
         $session_array = array('session_id' => $session['id'], 'session' => $session['session']);
         $this->session->set_userdata('session_array', $session_array);
+        $oldData = $this->session->userdata("admin");
+        $oldData["selected_term_id"] = $this->input->post("term_id");
+        $this->session->set_userdata("admin", $oldData);
         
         $this->common_model->update_where("sch_settings",array("id" => 1), array("session_id" => $this->input->post('popup_session'), "term_id" => $this->input->post('term_id')));
 
